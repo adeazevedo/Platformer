@@ -8,6 +8,7 @@ onready var anim_node = get_node("AnimationPlayer")
 func _ready():
 	sm.add("idle", "_on_idle_state")
 	sm.add("attack", "_on_attack_state")
+	sm.add("defend", "_on_defend_state")
 
 	sm.initial("idle")
 
@@ -18,11 +19,19 @@ func _ready():
 ##=================================
 ## Idle
 func _on_idle_state():
+	# Change to attack - when Z is pressed
+	if Input.is_action_pressed("Z"):
+		sm.change_to("attack")
+		return
+
+	# Change to defend - when X is pressed
+	elif Input.is_action_pressed("X"):
+		sm.change_to("defend")
+		return
+
 	if not anim_node.get_current_animation() == "idle":
 		anim_node.play("idle")
 
-	if Input.is_action_pressed("ui_accept"):
-		sm.change_to("attack")
 
 ## Attack
 func _on_attack_state():
@@ -30,6 +39,20 @@ func _on_attack_state():
 		anim_node.play("attack")
 
 	if not anim_node.is_playing():
+		sm.change_to("idle")
+
+
+## Defend
+func _on_defend_state():
+	if not anim_node.get_current_animation() == "defend":
+		anim_node.play("defend")
+
+	# Change to attack - when Z is pressed
+	if Input.is_action_pressed("Z"):
+		sm.change_to("attack")
+
+	# Change to defend - when X is realesed
+	if not Input.is_action_pressed("X"):
 		sm.change_to("idle")
 
 
