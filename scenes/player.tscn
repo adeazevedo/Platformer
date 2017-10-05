@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
-extents = Vector2( 9.38594, 26.841 )
+extents = Vector2( 9.38594, 25.2192 )
 
 [sub_resource type="Animation" id=2]
 
@@ -42,7 +42,7 @@ tracks/2/keys = {
 "times": FloatArray( 0, 0.3 ),
 "transitions": FloatArray( 1, 1 ),
 "update": 0,
-"values": [ Vector2( 1.21747, 0.540359 ), Vector2( -0.78253, 0.540359 ) ]
+"values": [ Vector2( 0.788195, -1.17676 ), Vector2( -0.78253, 0.540359 ) ]
 }
 tracks/3/type = "value"
 tracks/3/path = NodePath("CollisionShape:shape:extents")
@@ -52,10 +52,10 @@ tracks/3/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
 "update": 0,
-"values": [ Vector2( 13.9699, 26.841 ) ]
+"values": [ Vector2( 13.9699, 24.0425 ) ]
 }
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=3]
 
 resource/name = "defend"
 length = 0.1
@@ -79,7 +79,7 @@ tracks/1/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
 "update": 0,
-"values": [ Vector2( -3.18616, 0 ) ]
+"values": [ Vector2( -3.18616, -1.50248 ) ]
 }
 tracks/2/type = "value"
 tracks/2/path = NodePath("CollisionShape:shape:extents")
@@ -89,10 +89,10 @@ tracks/2/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
 "update": 0,
-"values": [ Vector2( 9.38594, 26.841 ) ]
+"values": [ Vector2( 9.38594, 25.2192 ) ]
 }
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=4]
 
 length = 1.8
 loop = true
@@ -135,14 +135,14 @@ tracks/3/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
 "update": 0,
-"values": [ Vector2( 13.9699, 26.841 ) ]
+"values": [ Vector2( 12.5145, 25.0046 ) ]
 }
 
 [node name="player" type="KinematicBody2D"]
 
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 1, 0, 0, 1, -3.18616, 0 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, -3.18616, -1.50248 )
 shapes/0/trigger = false
 collision/layers = 1
 collision/mask = 1
@@ -161,8 +161,8 @@ playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
 anims/attack = SubResource( 2 )
-anims/defend = SubResource( 4 )
-anims/idle = SubResource( 3 )
+anims/defend = SubResource( 3 )
+anims/idle = SubResource( 4 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
@@ -170,7 +170,7 @@ autoplay = "idle"
 
 [node name="CollisionShape" type="CollisionShape2D" parent="."]
 
-transform/pos = Vector2( -3.18616, 0 )
+transform/pos = Vector2( -3.18616, -1.50248 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
