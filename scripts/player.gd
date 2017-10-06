@@ -8,6 +8,8 @@ var BASE_MOVE_SPEED = 140
 
 var velocity = Vector2()
 var MOVE_SPEED = BASE_MOVE_SPEED
+var DASH_TIME = 0.4		# segundo
+var dash_count = 0
 
 onready var anim_node = get_node("AnimationPlayer")
 
@@ -16,6 +18,7 @@ func _ready():
 	sm.add("attack", "_on_attack_state")
 	sm.add("defend", "_on_defend_state")
 	sm.add("move", "_on_move_state")
+	sm.add("dash", "_on_dash_state")
 
 	sm.initial("idle")
 
@@ -53,6 +56,11 @@ func _on_idle_state():
 	# Change to defend - when X is pressed
 	if Input.is_action_pressed("X"):
 		sm.change_to("defend")
+		return
+
+	# Dash / Brake guard - when Space pressed
+	if Input.is_action_pressed("ui_select"):
+		sm.change_to("dash")
 		return
 
 	if Input.is_action_pressed("ui_right") or Input.is_action_pressed("ui_left"):
@@ -96,4 +104,22 @@ func _on_move_state():
 		velocity.x = -MOVE_SPEED
 
 	if not Input.is_action_pressed("ui_right") and not Input.is_action_pressed("ui_left"):
+		sm.change_to("idle")
+
+	if Input.is_action_pressed("ui_select"):
+		sm.change_to("dash")
+		return
+
+
+func _on_dash_state():
+	anim_node.play("dash")
+	velocity.x = MOVE_SPEED * 3
+
+	dash_count += get_fixed_process_delta_time()
+
+	if dash_count >= DASH_TIME:
+		anim_node.stop()
+		dash_count = 0
+		velocity.x = 0
+
 		sm.change_to("idle")
