@@ -8,6 +8,7 @@ var BASE_MOVE_SPEED = 140
 
 var velocity = Vector2()
 var MOVE_SPEED = BASE_MOVE_SPEED
+
 var DASH_TIME = 0.4		# segundo
 var dash_count = 0
 
@@ -17,7 +18,6 @@ func _ready():
 	sm.add("idle", "_on_idle_state")
 	sm.add("attack", "_on_attack_state")
 	sm.add("defend", "_on_defend_state")
-	sm.add("move", "_on_move_state")
 	sm.add("dash", "_on_dash_state")
 
 	sm.initial("idle")
@@ -26,6 +26,9 @@ func _ready():
 
 
 func _fixed_process(delta):
+	read_move_inputs()
+	sm.execute_next()
+
 	# Gravity
 	velocity.y += GRAVITY * delta
 	var motion = velocity * delta
@@ -37,34 +40,25 @@ func _fixed_process(delta):
 
 	move(motion)
 
-	sm.execute_next()
-
 
 ##=================================
 ## States
 ##=================================
 ## Idle
 func _on_idle_state():
-	MOVE_SPEED = BASE_MOVE_SPEED
-	velocity.x = 0
-
 	# Change to attack - when Z is pressed
-	if Input.is_action_pressed("Z"):
+	if Controls.attack_key_pressed():
 		sm.change_to("attack")
 		return
 
 	# Change to defend - when X is pressed
-	if Input.is_action_pressed("X"):
+	if Controls.defend_key_pressed():
 		sm.change_to("defend")
 		return
 
 	# Dash / Brake guard - when Space pressed
-	if Input.is_action_pressed("ui_select"):
+	if Controls.dash_key_pressed():
 		sm.change_to("dash")
-		return
-
-	if Input.is_action_pressed("ui_right") or Input.is_action_pressed("ui_left"):
-		sm.change_to("move")
 		return
 
 	if not anim_node.get_current_animation() == "idle":
@@ -82,38 +76,24 @@ func _on_attack_state():
 
 ## Defend
 func _on_defend_state():
-	MOVE_SPEED = 100
+	velocity.x = velocity.x / 4
+
 	if not anim_node.get_current_animation() == "defend":
 		anim_node.play("defend")
 
 	# Change to attack - when Z is pressed
-	if Input.is_action_pressed("Z"):
+	if Controls.attack_key_pressed():
 		sm.change_to("attack")
 
 	# Change to defend - when X is RELEASED
-	if not Input.is_action_pressed("X"):
+	if not Controls.defend_key_pressed():
 		sm.change_to("idle")
-
-
-## Move
-func _on_move_state():
-	if Input.is_action_pressed("ui_right"):
-		velocity.x = MOVE_SPEED
-
-	elif Input.is_action_pressed("ui_left"):
-		velocity.x = -MOVE_SPEED
-
-	if not Input.is_action_pressed("ui_right") and not Input.is_action_pressed("ui_left"):
-		sm.change_to("idle")
-
-	if Input.is_action_pressed("ui_select"):
-		sm.change_to("dash")
-		return
 
 
 func _on_dash_state():
-	anim_node.play("dash")
-	velocity.x = MOVE_SPEED * 3
+	if dash_count == 0:
+		anim_node.play("dash")
+		velocity.x = 500
 
 	dash_count += get_fixed_process_delta_time()
 
@@ -123,3 +103,13 @@ func _on_dash_state():
 		velocity.x = 0
 
 		sm.change_to("idle")
+
+## Move
+func read_move_inputs():
+	var direction = get_direction()
+	velocity.x = MOVE_SPEED * direction.x
+
+func get_direction():
+	var x = Controls.right_key_pressed() + (-Controls.left_key_pressed())
+
+	return Vector2(x, 0)
