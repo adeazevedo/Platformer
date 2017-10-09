@@ -10,12 +10,12 @@ func _ready():
 	set_process_input(true)
 
 
-func _input(delta):
+func _input(event):
 	right_key = Input.is_action_pressed("ui_right")
 	left_key = Input.is_action_pressed("ui_left")
-	attack_key = Input.is_action_pressed("attack_key")
+	attack_key = event.is_action_pressed("attack_key")
 	defend_key = Input.is_action_pressed("defend_key")
-	dash_key = Input.is_action_pressed("ui_select")
+	dash_key = event.is_action_pressed("ui_select")
 
 func right_key_pressed():
 	return right_key

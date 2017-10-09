@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
-extents = Vector2( 9.38594, 25.2192 )
+extents = Vector2( 13.9699, 24.0425 )
 
 [sub_resource type="Animation" id=2]
 
@@ -198,7 +198,7 @@ tracks/3/keys = {
 
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 1, 0, 0, 1, -6.96607, -0.410954 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, -0.78253, 0.540359 )
 shapes/0/trigger = false
 collision/layers = 1
 collision/mask = 1
@@ -210,7 +210,7 @@ script/script = ExtResource( 1 )
 texture = ExtResource( 2 )
 offset = Vector2( -4, 0 )
 region = true
-region_rect = Rect2( 376, 21, 41, 52 )
+region_rect = Rect2( 299, 100, 45, 50 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
@@ -228,9 +228,30 @@ autoplay = "idle"
 
 [node name="CollisionShape" type="CollisionShape2D" parent="."]
 
-transform/pos = Vector2( -6.96607, -0.410954 )
+transform/pos = Vector2( -0.78253, 0.540359 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
+
+[node name="DashTimer" type="Timer" parent="."]
+
+process_mode = 0
+wait_time = 0.4
+one_shot = true
+autostart = false
+
+[node name="DashCooldown" type="Timer" parent="."]
+
+process_mode = 0
+wait_time = 0.6
+one_shot = true
+autostart = false
+
+[node name="AttackTimer" type="Timer" parent="."]
+
+process_mode = 0
+wait_time = 0.7
+one_shot = true
+autostart = false
 
 
