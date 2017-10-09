@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=1]
+[gd_scene load_steps=11 format=1]
 
 [ext_resource path="res://scripts/player.gd" type="Script" id=1]
 [ext_resource path="res://sprites/Serdic.png" type="Texture" id=2]
@@ -6,11 +6,25 @@
 [sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
-extents = Vector2( 13.9699, 24.0425 )
+extents = Vector2( 12.5145, 25.0046 )
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="CircleShape2D" id=2]
 
-resource/name = "attack"
+custom_solver_bias = 0.0
+radius = 15.7649
+
+[sub_resource type="RectangleShape2D" id=3]
+
+custom_solver_bias = 0.0
+extents = Vector2( 3.32809, 23.2863 )
+
+[sub_resource type="RectangleShape2D" id=4]
+
+custom_solver_bias = 0.0
+extents = Vector2( 4.02709, 23.0449 )
+
+[sub_resource type="Animation" id=5]
+
 length = 0.7
 loop = false
 step = 0.1
@@ -35,34 +49,43 @@ tracks/1/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( 10, 0 ), Vector2( 9, 0 ), Vector2( -4, 0 ) ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("CollisionShape:transform/pos")
+tracks/2/path = NodePath("BodyCollision:transform/pos")
 tracks/2/interp = 1
 tracks/2/imported = false
 tracks/2/keys = {
 "times": FloatArray( 0, 0.3 ),
 "transitions": FloatArray( 1, 1 ),
-"update": 0,
+"update": 1,
 "values": [ Vector2( 0.788195, -1.17676 ), Vector2( -0.78253, 0.540359 ) ]
 }
 tracks/3/type = "value"
-tracks/3/path = NodePath("CollisionShape:shape:extents")
+tracks/3/path = NodePath("BodyCollision:shape:extents")
 tracks/3/interp = 1
 tracks/3/imported = false
 tracks/3/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
-"update": 0,
+"update": 1,
 "values": [ Vector2( 13.9699, 24.0425 ) ]
 }
+tracks/4/type = "value"
+tracks/4/path = NodePath("AttackCollision:visibility/visible")
+tracks/4/interp = 1
+tracks/4/imported = false
+tracks/4/keys = {
+"times": FloatArray( 0, 0.3, 0.5 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false ]
+}
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=6]
 
-resource/name = "dash"
 length = 0.6
 loop = true
 step = 0.1
 tracks/0/type = "value"
-tracks/0/path = NodePath("CollisionShape:transform/pos")
+tracks/0/path = NodePath("BodyCollision:transform/pos")
 tracks/0/interp = 1
 tracks/0/imported = false
 tracks/0/keys = {
@@ -72,7 +95,7 @@ tracks/0/keys = {
 "values": [ Vector2( -6.96607, -0.410954 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("CollisionShape:transform/rot")
+tracks/1/path = NodePath("BodyCollision:transform/rot")
 tracks/1/interp = 1
 tracks/1/imported = false
 tracks/1/keys = {
@@ -111,8 +134,18 @@ tracks/4/keys = {
 "update": 1,
 "values": [ Rect2( 376, 21, 41, 52 ), Rect2( 325, 21, 42, 52 ), Rect2( 376, 21, 41, 52 ), Rect2( 325, 21, 42, 52 ) ]
 }
+tracks/5/type = "value"
+tracks/5/path = NodePath("DashCollision:visibility/visible")
+tracks/5/interp = 1
+tracks/5/imported = false
+tracks/5/keys = {
+"times": FloatArray( 0 ),
+"transitions": FloatArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=7]
 
 length = 0.1
 loop = false
@@ -128,17 +161,17 @@ tracks/0/keys = {
 "values": [ Rect2( 475, 266, 45, 52 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("CollisionShape:transform/pos")
+tracks/1/path = NodePath("BodyCollision:transform/pos")
 tracks/1/interp = 1
 tracks/1/imported = false
 tracks/1/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
 "update": 0,
-"values": [ Vector2( -3.18616, -1.50248 ) ]
+"values": [ Vector2( -7.18616, -1.50248 ) ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("CollisionShape:shape:extents")
+tracks/2/path = NodePath("BodyCollision:shape:extents")
 tracks/2/interp = 1
 tracks/2/imported = false
 tracks/2/keys = {
@@ -147,8 +180,28 @@ tracks/2/keys = {
 "update": 0,
 "values": [ Vector2( 9.38594, 25.2192 ) ]
 }
+tracks/3/type = "value"
+tracks/3/path = NodePath("DefendCollision:visibility/visible")
+tracks/3/interp = 1
+tracks/3/imported = false
+tracks/3/keys = {
+"times": FloatArray( 0 ),
+"transitions": FloatArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("DefendCollision:transform/pos")
+tracks/4/interp = 1
+tracks/4/imported = false
+tracks/4/keys = {
+"times": FloatArray( 0 ),
+"transitions": FloatArray( 1 ),
+"update": 0,
+"values": [ Vector2( 5.80747, -2.45125 ) ]
+}
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=8]
 
 length = 1.8
 loop = true
@@ -174,23 +227,23 @@ tracks/1/keys = {
 "values": [ Vector2( 0, 0 ) ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("CollisionShape:transform/pos")
+tracks/2/path = NodePath("BodyCollision:transform/pos")
 tracks/2/interp = 1
 tracks/2/imported = false
 tracks/2/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
-"update": 0,
+"update": 1,
 "values": [ Vector2( -6.18615, 0 ) ]
 }
 tracks/3/type = "value"
-tracks/3/path = NodePath("CollisionShape:shape:extents")
+tracks/3/path = NodePath("BodyCollision:shape:extents")
 tracks/3/interp = 1
 tracks/3/imported = false
 tracks/3/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
-"update": 0,
+"update": 1,
 "values": [ Vector2( 12.5145, 25.0046 ) ]
 }
 
@@ -198,8 +251,17 @@ tracks/3/keys = {
 
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 1, 0, 0, 1, -0.78253, 0.540359 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, -6.18615, 0 )
 shapes/0/trigger = false
+shapes/1/shape = SubResource( 2 )
+shapes/1/transform = Matrix32( 1, 0, 0, 1, 29.4367, 3.8147e-06 )
+shapes/1/trigger = false
+shapes/2/shape = SubResource( 3 )
+shapes/2/transform = Matrix32( 1, 0, 0, 1, 5.80747, -2.45125 )
+shapes/2/trigger = false
+shapes/3/shape = SubResource( 4 )
+shapes/3/transform = Matrix32( 1, 0, 0, 1, 11.4479, -0.222342 )
+shapes/3/trigger = false
 collision/layers = 1
 collision/mask = 1
 collision/margin = 0.08
@@ -208,30 +270,53 @@ script/script = ExtResource( 1 )
 [node name="Sprite" type="Sprite" parent="."]
 
 texture = ExtResource( 2 )
-offset = Vector2( -4, 0 )
 region = true
-region_rect = Rect2( 299, 100, 45, 50 )
+region_rect = Rect2( 9, 20, 64, 54 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
-anims/attack = SubResource( 2 )
-anims/dash = SubResource( 3 )
-anims/defend = SubResource( 4 )
-anims/idle = SubResource( 5 )
+anims/attack = SubResource( 5 )
+anims/dash = SubResource( 6 )
+anims/defend = SubResource( 7 )
+anims/idle = SubResource( 8 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
 autoplay = "idle"
 
-[node name="CollisionShape" type="CollisionShape2D" parent="."]
+[node name="BodyCollision" type="CollisionShape2D" parent="."]
 
-transform/pos = Vector2( -0.78253, 0.540359 )
+transform/pos = Vector2( -6.18615, 0 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
+
+[node name="AttackCollision" type="CollisionShape2D" parent="."]
+
+visibility/visible = false
+transform/pos = Vector2( 29.4367, 3.8147e-06 )
+shape = SubResource( 2 )
+trigger = false
+_update_shape_index = 1
+
+[node name="DefendCollision" type="CollisionShape2D" parent="."]
+
+visibility/visible = false
+transform/pos = Vector2( 5.80747, -2.45125 )
+shape = SubResource( 3 )
+trigger = false
+_update_shape_index = 2
+
+[node name="DashCollision" type="CollisionShape2D" parent="."]
+
+visibility/visible = false
+transform/pos = Vector2( 11.4479, -0.222342 )
+shape = SubResource( 4 )
+trigger = false
+_update_shape_index = 3
 
 [node name="DashTimer" type="Timer" parent="."]
 

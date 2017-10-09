@@ -21,6 +21,9 @@ func change_to( state, args = [] ):
 	self.current_state = state
 	self.args = args
 
+func is_current_state(state):
+	return self.get_current() == state
+
 func get_current():
 	return self.current_state
 
