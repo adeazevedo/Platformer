@@ -10,12 +10,19 @@ var velocity = Vector2()
 var can_attack = true
 var can_dash = true
 
+var is_attacking = false
+var is_dashing = false
+var is_defending = false
+
 onready var anim_node = get_node("AnimationPlayer")
 onready var attack_timer = get_node("AttackTimer")
 onready var dash_timer = get_node("DashTimer")
 onready var dash_cooldown = get_node("DashCooldown")
 
+
 func _ready():
+	add_to_group("player")
+
 	sm.add("idle", "_on_idle_state")
 	sm.add("attack", "_on_attack_state")
 	sm.add("defend", "_on_defend_state")
@@ -51,8 +58,6 @@ func _fixed_process(delta):
 ##=================================
 ## Idle
 func _on_idle_state():
-	get_node("DefendCollision").hide()
-
 	# Change to attack - when Z is pressed
 	if can_attack and Controls.attack_key_pressed():
 		sm.change_to("attack")
@@ -74,51 +79,72 @@ func _on_idle_state():
 
 ## Attack
 func _on_attack_state():
-	get_node("DefendCollision").hide()
 	velocity.x = velocity.x / 2
 
 	if can_attack:
 		can_attack = false
+		is_attacking = true
 
 		anim_node.play("attack")
 		attack_timer.start()
 
 func _on_attack_end():
 	can_attack = true
+	is_attacking = false
 	sm.change_to("idle")
 
 
 ## Defend
 func _on_defend_state():
 	velocity.x = velocity.x / 4
+	is_defending = true
+
+	get_node("DefendCollision").set_enable_monitoring(true)
+	get_node("DefendCollision").show()
 
 	if not anim_node.get_current_animation() == "defend":
 		anim_node.play("defend")
 
 	# Change to attack - when Z is pressed
 	if Controls.attack_key_pressed():
+		is_defending = false
+		get_node("DefendCollision").set_enable_monitoring(false)
+		get_node("DefendCollision").hide()
 		sm.change_to("attack")
 
 	# Change to defend - when X is RELEASED
 	if not Controls.defend_key_pressed():
+		is_defending = false
+		get_node("DefendCollision").set_enable_monitoring(false)
+		get_node("DefendCollision").hide()
 		sm.change_to("idle")
 
 
 func _on_dash_state():
 	if can_dash:
 		can_dash = false
+		is_dashing = true
+
+		get_node("DashCollision").set_enable_monitoring(true)
+		get_node("DashCollision").show()
+
 		anim_node.play("dash")
-		velocity.x = get_scale().x * 500
+		velocity.x = get_scale().x * BASE_MOVE_SPEED * 3
 
 		dash_timer.start()
 
 func _on_dash_end():
+	is_dashing = false
+
 	anim_node.stop()
 	velocity.x = 0
-	sm.change_to("idle")
+
+	get_node("DashCollision").set_enable_monitoring(false)
 	get_node("DashCollision").hide()
 
 	dash_cooldown.start()
+
+	sm.change_to("idle")
 
 func _on_dash_cooldown_end():
 	can_dash = true
@@ -128,14 +154,29 @@ func read_inputs():
 	var direction = get_direction()
 
 	# Horizonatal flip
-	if !sm.is_current_state("defend"):
+	if !is_defending and !is_attacking and !is_dashing:
 		if direction.x != 0:
 			set_scale(Vector2(direction.x, 1))
 
-	if !sm.is_current_state("dash"):
+	if !is_dashing:
 		velocity.x = BASE_MOVE_SPEED * direction.x
+
 
 func get_direction():
 	var h = Controls.right_key_pressed() + (-Controls.left_key_pressed())
 
 	return Vector2(h, 0)
+
+func _on_AttackCollision_body_enter( body ):
+	if body.is_in_group("enemy"):
+		print("Attack")
+
+
+func _on_DashCollision_body_enter( body ):
+	if body.is_in_group("enemy"):
+		print("Dash")
+
+
+func _on_DefendCollision_body_enter( body ):
+	if body.is_in_group("enemy"):
+		print("Defend")

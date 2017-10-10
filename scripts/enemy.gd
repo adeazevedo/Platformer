@@ -5,7 +5,11 @@ onready var sm = StateMachine.new(self)
 const GRAVITY = 300
 var velocity = Vector2()
 
+onready var anim_node = get_node("AnimationPlayer")
+
 func _ready():
+	add_to_group("enemy")
+
 	sm.add("idle", "_on_idle_state")
 	sm.add("attack", "_on_attack_state")
 	sm.add("defend", "_on_defend_state")
@@ -14,6 +18,7 @@ func _ready():
 	sm.initial("idle")
 
 	set_fixed_process(true)
+
 
 func _fixed_process(delta):
 	sm.execute_next()
@@ -30,7 +35,8 @@ func _fixed_process(delta):
 
 
 func _on_idle_state():
-	pass
+	if !anim_node.is_playing():
+		anim_node.play("idle")
 
 
 func _on_attack_state():
