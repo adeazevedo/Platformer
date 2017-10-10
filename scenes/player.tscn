@@ -85,60 +85,40 @@ length = 0.6
 loop = true
 step = 0.1
 tracks/0/type = "value"
-tracks/0/path = NodePath("BodyCollision:transform/pos")
+tracks/0/path = NodePath("Sprite:transform/pos")
 tracks/0/interp = 1
 tracks/0/imported = false
 tracks/0/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
-"update": 0,
-"values": [ Vector2( -6.96607, -0.410954 ) ]
+"update": 1,
+"values": [ Vector2( 0, 0 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("BodyCollision:transform/rot")
+tracks/1/path = NodePath("Sprite:transform/rot")
 tracks/1/interp = 1
 tracks/1/imported = false
 tracks/1/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
-"update": 0,
+"update": 1,
 "values": [ 0.0 ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("Sprite:transform/pos")
+tracks/2/path = NodePath("Sprite:region_rect")
 tracks/2/interp = 1
 tracks/2/imported = false
 tracks/2/keys = {
-"times": FloatArray( 0 ),
-"transitions": FloatArray( 1 ),
-"update": 0,
-"values": [ Vector2( 0, 0 ) ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("Sprite:transform/rot")
-tracks/3/interp = 1
-tracks/3/imported = false
-tracks/3/keys = {
-"times": FloatArray( 0 ),
-"transitions": FloatArray( 1 ),
-"update": 0,
-"values": [ 0.0 ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("Sprite:region_rect")
-tracks/4/interp = 1
-tracks/4/imported = false
-tracks/4/keys = {
 "times": FloatArray( 0, 0.3, 0.4, 0.5 ),
 "transitions": FloatArray( 1, 1, 1, 1 ),
 "update": 1,
 "values": [ Rect2( 376, 21, 41, 52 ), Rect2( 325, 21, 42, 52 ), Rect2( 376, 21, 41, 52 ), Rect2( 325, 21, 42, 52 ) ]
 }
-tracks/5/type = "value"
-tracks/5/path = NodePath("DashCollision:visibility/visible")
-tracks/5/interp = 1
-tracks/5/imported = false
-tracks/5/keys = {
+tracks/3/type = "value"
+tracks/3/path = NodePath("DashCollision:visibility/visible")
+tracks/3/interp = 1
+tracks/3/imported = false
+tracks/3/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
 "update": 1,
@@ -252,13 +232,13 @@ tracks/3/keys = {
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, -6.18615, 0 )
-shapes/0/trigger = false
+shapes/0/trigger = true
 shapes/1/shape = SubResource( 2 )
 shapes/1/transform = Matrix32( 1, 0, 0, 1, 29.4367, 3.8147e-06 )
-shapes/1/trigger = false
+shapes/1/trigger = true
 shapes/2/shape = SubResource( 3 )
 shapes/2/transform = Matrix32( 1, 0, 0, 1, 5.80747, -2.45125 )
-shapes/2/trigger = false
+shapes/2/trigger = true
 shapes/3/shape = SubResource( 4 )
 shapes/3/transform = Matrix32( 1, 0, 0, 1, 11.4479, -0.222342 )
 shapes/3/trigger = false
@@ -291,7 +271,7 @@ autoplay = "idle"
 
 transform/pos = Vector2( -6.18615, 0 )
 shape = SubResource( 1 )
-trigger = false
+trigger = true
 _update_shape_index = 0
 
 [node name="AttackCollision" type="CollisionShape2D" parent="."]
@@ -299,7 +279,7 @@ _update_shape_index = 0
 visibility/visible = false
 transform/pos = Vector2( 29.4367, 3.8147e-06 )
 shape = SubResource( 2 )
-trigger = false
+trigger = true
 _update_shape_index = 1
 
 [node name="DefendCollision" type="CollisionShape2D" parent="."]
@@ -307,7 +287,7 @@ _update_shape_index = 1
 visibility/visible = false
 transform/pos = Vector2( 5.80747, -2.45125 )
 shape = SubResource( 3 )
-trigger = false
+trigger = true
 _update_shape_index = 2
 
 [node name="DashCollision" type="CollisionShape2D" parent="."]

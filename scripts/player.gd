@@ -1,5 +1,4 @@
 extends KinematicBody2D
-
 var StateMachine = preload("res://scripts/StateMachine.gd")
 onready var sm = StateMachine.new(self)
 
@@ -112,7 +111,6 @@ func _on_dash_state():
 		velocity.x = get_scale().x * 500
 
 		dash_timer.start()
-
 
 func _on_dash_end():
 	anim_node.stop()
