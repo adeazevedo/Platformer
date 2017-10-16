@@ -8,7 +8,7 @@
 custom_solver_bias = 0.0
 extents = Vector2( 13.9699, 24.0425 )
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=2]
 
 length = 0.7
 loop = false
@@ -64,7 +64,7 @@ tracks/4/keys = {
 "values": [ Vector2( 5, 6 ) ]
 }
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=3]
 
 length = 0.6
 loop = true
@@ -90,7 +90,7 @@ tracks/1/keys = {
 "values": [ Vector2( 2, 5 ) ]
 }
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=4]
 
 length = 0.1
 loop = false
@@ -113,7 +113,7 @@ tracks/1/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
 "update": 0,
-"values": [ Vector2( -2, 6 ) ]
+"values": [ Vector2( -11, 5 ) ]
 }
 tracks/2/type = "value"
 tracks/2/path = NodePath("DefendCollision:transform/pos")
@@ -123,10 +123,20 @@ tracks/2/keys = {
 "times": FloatArray( 0 ),
 "transitions": FloatArray( 1 ),
 "update": 0,
-"values": [ Vector2( 6, 9 ) ]
+"values": [ Vector2( 7, 6 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("DefendCollision:visibility/visible")
+tracks/3/interp = 1
+tracks/3/imported = false
+tracks/3/keys = {
+"times": FloatArray( 0 ),
+"transitions": FloatArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
-[sub_resource type="Animation" id=8]
+[sub_resource type="Animation" id=5]
 
 length = 1.8
 loop = true
@@ -162,17 +172,17 @@ tracks/2/keys = {
 "values": [ Vector2( -6.18615, 5 ) ]
 }
 
-[sub_resource type="CircleShape2D" id=2]
+[sub_resource type="CircleShape2D" id=6]
 
 custom_solver_bias = 0.0
 radius = 15.7649
 
-[sub_resource type="RectangleShape2D" id=3]
+[sub_resource type="RectangleShape2D" id=7]
 
 custom_solver_bias = 0.0
 extents = Vector2( 3.32809, 24 )
 
-[sub_resource type="RectangleShape2D" id=9]
+[sub_resource type="RectangleShape2D" id=8]
 
 custom_solver_bias = 0.0
 extents = Vector2( 2.5521, 24 )
@@ -183,7 +193,7 @@ transform/pos = Vector2( 1, -32 )
 z/z = 1
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 1, 0, 0, 1, 5, 6 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, -11, 5 )
 shapes/0/trigger = false
 collision/layers = 1
 collision/mask = 1
@@ -196,17 +206,17 @@ transform/pos = Vector2( 0, 6 )
 texture = ExtResource( 2 )
 offset = Vector2( -4, 0 )
 region = true
-region_rect = Rect2( 299, 100, 45, 50 )
+region_rect = Rect2( 476, 265, 43, 52 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
-anims/attack = SubResource( 5 )
-anims/dash = SubResource( 6 )
-anims/defend = SubResource( 7 )
-anims/idle = SubResource( 8 )
+anims/attack = SubResource( 2 )
+anims/dash = SubResource( 3 )
+anims/defend = SubResource( 4 )
+anims/idle = SubResource( 5 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
@@ -214,7 +224,7 @@ autoplay = "idle"
 
 [node name="BodyCollision" type="CollisionShape2D" parent="."]
 
-transform/pos = Vector2( 5, 6 )
+transform/pos = Vector2( -11, 5 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
@@ -224,7 +234,7 @@ _update_shape_index = 0
 visibility/visible = false
 transform/pos = Vector2( 35, 5 )
 input/pickable = false
-shapes/0/shape = SubResource( 2 )
+shapes/0/shape = SubResource( 6 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
 shapes/0/trigger = true
 gravity_vec = Vector2( 0, 1 )
@@ -235,17 +245,17 @@ monitoring = false
 
 [node name="Shape" type="CollisionShape2D" parent="AttackCollision"]
 
-shape = SubResource( 2 )
+shape = SubResource( 6 )
 trigger = true
 _update_shape_index = 0
 
 [node name="DefendCollision" type="Area2D" parent="."]
 
 visibility/visible = false
-transform/pos = Vector2( 16, 6 )
+transform/pos = Vector2( 7, 6 )
 input/pickable = false
-shapes/0/shape = SubResource( 3 )
-shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+shapes/0/shape = SubResource( 7 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, -1 )
 shapes/0/trigger = true
 gravity_vec = Vector2( 0, 1 )
 gravity = 98.0
@@ -255,8 +265,9 @@ monitoring = false
 
 [node name="Shape" type="CollisionShape2D" parent="DefendCollision"]
 
+transform/pos = Vector2( 0, -1 )
 z/z = 1
-shape = SubResource( 3 )
+shape = SubResource( 7 )
 trigger = true
 _update_shape_index = 0
 
@@ -265,7 +276,7 @@ _update_shape_index = 0
 visibility/visible = false
 transform/pos = Vector2( 21, 4 )
 input/pickable = false
-shapes/0/shape = SubResource( 9 )
+shapes/0/shape = SubResource( 8 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, -2, 1 )
 shapes/0/trigger = false
 gravity_vec = Vector2( 0, 1 )
@@ -277,7 +288,7 @@ monitoring = false
 [node name="Shape" type="CollisionShape2D" parent="DashCollision"]
 
 transform/pos = Vector2( -2, 1 )
-shape = SubResource( 9 )
+shape = SubResource( 8 )
 trigger = false
 _update_shape_index = 0
 
