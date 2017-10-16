@@ -13,10 +13,12 @@ var can_dash = true
 var is_attacking = false
 var is_dashing = false
 var is_defending = false
+var is_stagger = false
 
 onready var anim_node = get_node("AnimationPlayer")
 onready var attack_timer = get_node("AttackTimer")
 onready var dash_timer = get_node("DashTimer")
+onready var stagger_timer = get_node("StaggerTimer")
 onready var dash_cooldown = get_node("DashCooldown")
 
 
@@ -27,11 +29,13 @@ func _ready():
 	sm.add("attack", "_on_attack_state")
 	sm.add("defend", "_on_defend_state")
 	sm.add("dash", "_on_dash_state")
+	sm.add("stagger", "_on_stagger_state")
 
 	sm.initial("idle")
 
 	attack_timer.connect("timeout", self, "_on_attack_end")
 	dash_timer.connect("timeout", self, "_on_dash_end")
+	stagger_timer.connect("timeout" ,self, "_on_stagger_end")
 	dash_cooldown.connect("timeout", self, "_on_dash_cooldown_end")
 
 	get_node("AttackCollision").set_enable_monitoring(false)
@@ -98,6 +102,8 @@ func _on_attack_state():
 func _on_attack_end():
 	can_attack = true
 	is_attacking = false
+	get_node("AttackCollision").set_enable_monitoring(false)
+	get_node("AttackCollision").hide()
 	sm.change_to("idle")
 
 
@@ -156,6 +162,20 @@ func _on_dash_end():
 func _on_dash_cooldown_end():
 	can_dash = true
 
+
+func _on_stagger_state():
+	velocity.x = velocity.x / 4
+
+	if !is_stagger:
+		is_stagger = true
+		anim_node.play("stagger")
+		stagger_timer.start()
+
+func _on_stagger_end():
+	is_stagger = false
+
+	sm.change_to("idle")
+
 ## Move
 func read_inputs():
 	var direction = get_direction()
@@ -169,6 +189,13 @@ func read_inputs():
 		velocity.x = BASE_MOVE_SPEED * direction.x
 
 
+func interrupt_attack():
+	can_attack = true
+	is_attacking = false
+	get_node("AttackCollision").set_enable_monitoring(false)
+	get_node("AttackCollision").hide()
+
+
 func get_direction():
 	var h = Controls.right_key_pressed() + (-Controls.left_key_pressed())
 
@@ -180,15 +207,19 @@ func calc_dmg():
 
 func _on_AttackCollision_body_enter( body ):
 	if body.is_in_group("enemy"):
-		print("Attack")
-		#Apply damage
+
+		# If attacking body collide with a defending body, attacking body will stagger
+		if body.is_defending:
+			interrupt_attack()
+			sm.change_to("stagger")
+			return
+
+		# Apply damage
 		if body.has_method("apply_damage"):
 			if !body.is_breaking:
 				body.apply_damage(1)
-				print("Applying normal damage")
 			else:
 				body.apply_damage(2)
-				print("Applying double damage")
 
 
 func _on_DashCollision_body_enter( body ):
@@ -196,7 +227,7 @@ func _on_DashCollision_body_enter( body ):
 		print("Dash")
 
 		if body.is_defending:
-			print("Breaking guard")
+			body.stagger()
 
 
 func _on_DefendCollision_body_enter( body ):

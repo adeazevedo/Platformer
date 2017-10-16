@@ -6,9 +6,9 @@ const GRAVITY = 300
 var velocity = Vector2()
 
 var is_attacking = false
-var is_breaking = false
+var is_breaking_guard = false
 var is_defending = false
-var is_hit = false
+var is_staggering = false
 
 onready var anim_node = get_node("AnimationPlayer")
 
@@ -19,11 +19,13 @@ func _ready():
 	sm.add("attack", "_on_attack_state")
 	sm.add("defend", "_on_defend_state")
 	sm.add("break_guard", "_on_break_guard_state")
-	sm.add("hit", "_on_hit_state")
+	sm.add("stagger", "_on_stagger_state")
 
-	sm.initial("idle")
+	sm.initial("defend")
 
-	get_node("HitTimer").connect("timeout", self, "_on_hit_end")
+	get_node("BreakGuardTimer").connect("timeout", self, "_on_break_guard_end")
+	get_node("StaggerTimer").connect("timeout", self, "_on_stagger_end")
+	get_node("DefendTimer").connect("timeout", self, "_on_defend_end")
 
 	set_fixed_process(true)
 
@@ -58,22 +60,44 @@ func _on_attack_state():
 
 
 func _on_defend_state():
+	if !is_defending:
+		is_defending = true
+		anim_node.play("defend")
+
+		get_node("DefendTimer").start()
+
+func _on_defend_end():
 	is_defending = true
+	#sm.change_to("idle")
 
 
 func _on_break_guard_state():
-	is_breaking = true
+	if !is_breaking_guard:
+		is_breaking_guard = true
+		anim_node.play("break_guard")
 
+		get_node("BreakGuardTimer").start()
 
-func _on_hit_state():
-	if !is_hit:
-		anim_node.play("hit")
-		is_hit = true
-		get_node("HitTimer").start()
+func _on_break_guard_end():
+	is_breaking_guard = false
 
-func _on_hit_end():
-	is_hit = false
 	sm.change_to("idle")
+
+
+func _on_stagger_state():
+	if !is_staggering:
+		is_staggering = true
+		anim_node.play("stagger")
+		get_node("StaggerTimer").start()
+
+func _on_stagger_end():
+	is_staggering = false
+	sm.change_to("idle")
+
+
+func stagger():
+	print()
+	sm.change_to("stagger")
 
 
 # When in sight range
