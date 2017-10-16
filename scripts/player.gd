@@ -34,6 +34,13 @@ func _ready():
 	dash_timer.connect("timeout", self, "_on_dash_end")
 	dash_cooldown.connect("timeout", self, "_on_dash_cooldown_end")
 
+	get_node("AttackCollision").set_enable_monitoring(false)
+	get_node("AttackCollision").hide()
+	get_node("DefendCollision").set_enable_monitoring(false)
+	get_node("DefendCollision").hide()
+	get_node("DashCollision").set_enable_monitoring(false)
+	get_node("DashCollision").hide()
+
 	set_fixed_process(true)
 
 
@@ -167,16 +174,34 @@ func get_direction():
 
 	return Vector2(h, 0)
 
+
+func calc_dmg():
+	return 1
+
 func _on_AttackCollision_body_enter( body ):
 	if body.is_in_group("enemy"):
 		print("Attack")
+		#Apply damage
+		if body.has_method("apply_damage"):
+			if !body.is_breaking:
+				body.apply_damage(1)
+				print("Applying normal damage")
+			else:
+				body.apply_damage(2)
+				print("Applying double damage")
 
 
 func _on_DashCollision_body_enter( body ):
 	if body.is_in_group("enemy"):
 		print("Dash")
 
+		if body.is_defending:
+			print("Breaking guard")
+
 
 func _on_DefendCollision_body_enter( body ):
 	if body.is_in_group("enemy"):
 		print("Defend")
+
+		if body.is_attacking:
+			print("Enemy vulnerable")
