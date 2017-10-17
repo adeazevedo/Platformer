@@ -190,9 +190,8 @@ func read_inputs():
 
 
 func interrupt_attack():
-	can_attack = true
 	is_attacking = false
-	get_node("AttackCollision").set_enable_monitoring(false)
+	get_node("AttackCollision").call_deferred("set_enable_monitoring", false)
 	get_node("AttackCollision").hide()
 
 
@@ -216,7 +215,7 @@ func _on_AttackCollision_body_enter( body ):
 
 		# Apply damage
 		if body.has_method("apply_damage"):
-			if !body.is_breaking:
+			if !body.is_breaking_guard:
 				body.apply_damage(1)
 			else:
 				body.apply_damage(2)

@@ -4,7 +4,12 @@ onready var sm = StateMachine.new(self)
 
 const GRAVITY = 300
 var velocity = Vector2()
+var move_speed = 80
 
+var enemies_in_sight = []
+var target
+
+var is_chasing = false
 var is_attacking = false
 var is_breaking_guard = false
 var is_defending = false
@@ -12,20 +17,18 @@ var is_staggering = false
 
 onready var anim_node = get_node("AnimationPlayer")
 
+
 func _ready():
 	add_to_group("enemy")
 
 	sm.add("idle", "_on_idle_state")
+	sm.add("chase", "_on_chase_state")
 	sm.add("attack", "_on_attack_state")
 	sm.add("defend", "_on_defend_state")
 	sm.add("break_guard", "_on_break_guard_state")
 	sm.add("stagger", "_on_stagger_state")
 
-	sm.initial("defend")
-
-	get_node("BreakGuardTimer").connect("timeout", self, "_on_break_guard_end")
-	get_node("StaggerTimer").connect("timeout", self, "_on_stagger_end")
-	get_node("DefendTimer").connect("timeout", self, "_on_defend_end")
+	sm.initial("idle")
 
 	set_fixed_process(true)
 
@@ -47,16 +50,63 @@ func apply_damage (value):
 	print("Damage received: ", value)
 
 	# Change to hit state
-	sm.change_to("hit")
+	sm.change_to("stagger")
 
+func search_next_state():
+	var state = null
+
+	target = enemies_in_sight.front() if enemies_in_sight.size() > 0 else null
+
+	if target != null:
+		if get_pos().distance_to(target.get_pos()) > 75:
+			state = "chase"
+		else:
+			state = "attack"
+
+	else:
+		state = "idle"
+
+	return state
 
 func _on_idle_state():
-	if !anim_node.is_playing():
+	velocity.x = 0
+
+	if anim_node.get_current_animation() != "idle":
 		anim_node.play("idle")
+
+	var state = search_next_state()
+
+	sm.change_to(state)
+
+
+func _on_chase_state():
+	if !target:
+		sm.change_to("idle")
+		return
+
+	var my_pos = get_pos()
+	var target_pos = target.get_pos()
+
+	var distance = my_pos.distance_to(target_pos)
+
+	if distance > 80:
+		var direction = target_pos - my_pos
+		velocity.x = direction.x * move_speed * get_process_delta_time()
+
+	else:
+		sm.change_to("attack")
+
 
 
 func _on_attack_state():
-	is_attacking = true
+	if !is_attacking:
+		is_attacking = true
+		anim_node.play("attack")
+		get_node("AttackTimer").start()
+
+func _on_attack_end():
+	is_attacking = false
+	sm.change_to("idle")
 
 
 func _on_defend_state():
@@ -68,7 +118,7 @@ func _on_defend_state():
 
 func _on_defend_end():
 	is_defending = true
-	#sm.change_to("idle")
+	sm.change_to("idle")
 
 
 func _on_break_guard_state():
@@ -96,11 +146,25 @@ func _on_stagger_end():
 
 
 func stagger():
-	print()
+	is_attacking = false
+	is_defending = false
+	is_breaking_guard = false
 	sm.change_to("stagger")
 
 
 # When in sight range
 func _on_Sight_body_enter( body ):
 	if body.is_in_group("player"):
-		print("Player is in Sight")
+		if !enemies_in_sight.has(body):
+			enemies_in_sight.append(body)
+
+		target = body if target == null else body
+		sm.change_to("chase")
+
+
+func _on_Sight_body_exit( body ):
+	if body.is_in_group("player"):
+		var i = enemies_in_sight.find(body)
+		if i >= 0:
+			target = null if target == body else target
+			enemies_in_sight.remove(i)
