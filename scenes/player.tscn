@@ -172,7 +172,7 @@ tracks/2/keys = {
 "values": [ Vector2( -6.18615, 5 ) ]
 }
 
-[sub_resource type="Animation" id=9]
+[sub_resource type="Animation" id=6]
 
 resource/name = "stagger"
 length = 1.0
@@ -189,17 +189,17 @@ tracks/0/keys = {
 "values": [ Rect2( 306, 267, 62, 50 ), Rect2( 380, 268, 62, 49 ) ]
 }
 
-[sub_resource type="CircleShape2D" id=6]
+[sub_resource type="CircleShape2D" id=7]
 
 custom_solver_bias = 0.0
 radius = 15.7649
 
-[sub_resource type="RectangleShape2D" id=7]
+[sub_resource type="RectangleShape2D" id=8]
 
 custom_solver_bias = 0.0
 extents = Vector2( 5, 24 )
 
-[sub_resource type="RectangleShape2D" id=8]
+[sub_resource type="RectangleShape2D" id=9]
 
 custom_solver_bias = 0.0
 extents = Vector2( 2.5521, 24 )
@@ -233,7 +233,7 @@ anims/attack = SubResource( 2 )
 anims/dash = SubResource( 3 )
 anims/defend = SubResource( 4 )
 anims/idle = SubResource( 5 )
-anims/stagger = SubResource( 9 )
+anims/stagger = SubResource( 6 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
@@ -256,7 +256,7 @@ editor/display_folded = true
 visibility/visible = false
 transform/pos = Vector2( 35, 5 )
 input/pickable = false
-shapes/0/shape = SubResource( 6 )
+shapes/0/shape = SubResource( 7 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
 shapes/0/trigger = true
 gravity_vec = Vector2( 0, 1 )
@@ -267,7 +267,7 @@ monitoring = false
 
 [node name="Shape" type="CollisionShape2D" parent="AttackCollision"]
 
-shape = SubResource( 6 )
+shape = SubResource( 7 )
 trigger = true
 _update_shape_index = 0
 __meta__ = {
@@ -280,7 +280,7 @@ editor/display_folded = true
 visibility/visible = false
 transform/pos = Vector2( 8, 6 )
 input/pickable = false
-shapes/0/shape = SubResource( 7 )
+shapes/0/shape = SubResource( 8 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, -1 )
 shapes/0/trigger = true
 gravity_vec = Vector2( 0, 1 )
@@ -293,7 +293,7 @@ monitoring = false
 
 transform/pos = Vector2( 0, -1 )
 z/z = 1
-shape = SubResource( 7 )
+shape = SubResource( 8 )
 trigger = true
 _update_shape_index = 0
 __meta__ = {
@@ -306,7 +306,7 @@ editor/display_folded = true
 visibility/visible = false
 transform/pos = Vector2( 21, 4 )
 input/pickable = false
-shapes/0/shape = SubResource( 8 )
+shapes/0/shape = SubResource( 9 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, -2, 1 )
 shapes/0/trigger = false
 gravity_vec = Vector2( 0, 1 )
@@ -318,7 +318,7 @@ monitoring = false
 [node name="Shape" type="CollisionShape2D" parent="DashCollision"]
 
 transform/pos = Vector2( -2, 1 )
-shape = SubResource( 8 )
+shape = SubResource( 9 )
 trigger = false
 _update_shape_index = 0
 __meta__ = {
