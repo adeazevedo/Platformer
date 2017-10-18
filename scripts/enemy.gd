@@ -9,6 +9,9 @@ var move_speed = 80
 var enemies_in_sight = []
 var target
 
+var hp = 10
+var ATTACK_RANGE = 100
+
 var is_chasing = false
 var is_attacking = false
 var is_breaking_guard = false
@@ -46,9 +49,14 @@ func _fixed_process(delta):
 
 	move(motion)
 
-func apply_damage (value):
-	print("Damage received: ", value)
 
+func calc_atk():
+	return 1
+
+
+func apply_dmg (value):
+	print("Damage received: ", value)
+	hp -= value
 	# Change to hit state
 	sm.change_to("stagger")
 
@@ -89,7 +97,7 @@ func _on_chase_state():
 
 	var distance = my_pos.distance_to(target_pos)
 
-	if distance > 80:
+	if distance > ATTACK_RANGE:
 		var direction = target_pos - my_pos
 		velocity.x = direction.x * move_speed * get_process_delta_time()
 

@@ -7,6 +7,8 @@ const BASE_MOVE_SPEED = 140
 
 var velocity = Vector2()
 
+var hp = 10
+
 var can_attack = true
 var can_dash = true
 
@@ -63,6 +65,14 @@ func _fixed_process(delta):
 
 	move(motion)
 
+
+func calc_atk():
+	return 1
+
+func apply_dmg( value ):
+	print("Jogador recebeu ", value, " dano")
+	hp -= value
+	sm.change_to("stagger")
 
 ##=================================
 ## States
@@ -203,35 +213,3 @@ func get_direction():
 
 func calc_dmg():
 	return 1
-
-func _on_AttackCollision_body_enter( body ):
-	if body.is_in_group("enemy"):
-
-		# If attacking body collide with a defending body, attacking body will stagger
-		if body.is_defending:
-			interrupt_attack()
-			sm.change_to("stagger")
-			return
-
-		# Apply damage
-		if body.has_method("apply_damage"):
-			if !body.is_breaking_guard:
-				body.apply_damage(1)
-			else:
-				body.apply_damage(2)
-
-
-func _on_DashCollision_body_enter( body ):
-	if body.is_in_group("enemy"):
-		print("Dash")
-
-		if body.is_defending:
-			body.stagger()
-
-
-func _on_DefendCollision_body_enter( body ):
-	if body.is_in_group("enemy"):
-		print("Defend")
-
-		if body.is_attacking:
-			print("Enemy vulnerable")
