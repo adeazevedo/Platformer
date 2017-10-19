@@ -1,11 +1,5 @@
 # Base implementation for defend collision entities
-
-extends Area2D
-
-export(String) var _enemy_group
-export(NodePath) var _parent_path
-
-onready var _parent = get_node(_parent_path)
+extends "res://scripts/CollisionArea.gd"
 
 func _ready():
 	connect("body_enter", self, "_on_collision_body_enter")

@@ -74,6 +74,19 @@ func apply_dmg( value ):
 	hp -= value
 	sm.change_to("stagger")
 
+func stagger():
+	is_attacking = false
+	is_defending = false
+	is_dashing = false
+
+	get_node("AttackCollision").deactivate()
+	get_node("DefendCollision").deactivate()
+	get_node("DashCollision").deactivate()
+
+	attack_timer.call_deferred("stop")
+
+	sm.change_to("stagger")
+
 ##=================================
 ## States
 ##=================================
@@ -122,8 +135,7 @@ func _on_defend_state():
 	velocity.x = velocity.x / 4
 	is_defending = true
 
-	get_node("DefendCollision").set_enable_monitoring(true)
-	get_node("DefendCollision").show()
+	get_node("DefendCollision").activate()
 
 	if not anim_node.get_current_animation() == "defend":
 		anim_node.play("defend")
@@ -131,15 +143,15 @@ func _on_defend_state():
 	# Change to attack - when Z is pressed
 	if Controls.attack_key_pressed():
 		is_defending = false
-		get_node("DefendCollision").set_enable_monitoring(false)
-		get_node("DefendCollision").hide()
+		get_node("DefendCollision").deactivate()
+
 		sm.change_to("attack")
 
 	# Change to defend - when X is RELEASED
 	if not Controls.defend_key_pressed():
 		is_defending = false
-		get_node("DefendCollision").set_enable_monitoring(false)
-		get_node("DefendCollision").hide()
+		get_node("DefendCollision").deactivate()
+
 		sm.change_to("idle")
 
 
@@ -148,8 +160,7 @@ func _on_dash_state():
 		can_dash = false
 		is_dashing = true
 
-		get_node("DashCollision").set_enable_monitoring(true)
-		get_node("DashCollision").show()
+		get_node("DashCollision").activate()
 
 		anim_node.play("dash")
 		velocity.x = get_scale().x * BASE_MOVE_SPEED * 3
@@ -162,8 +173,7 @@ func _on_dash_end():
 	anim_node.stop()
 	velocity.x = 0
 
-	get_node("DashCollision").set_enable_monitoring(false)
-	get_node("DashCollision").hide()
+	get_node("DashCollision").deactivate()
 
 	dash_cooldown.start()
 
@@ -201,15 +211,10 @@ func read_inputs():
 
 func interrupt_attack():
 	is_attacking = false
-	get_node("AttackCollision").call_deferred("set_enable_monitoring", false)
-	get_node("AttackCollision").hide()
+	get_node("AttackCollision").deactivate()
 
 
 func get_direction():
 	var h = Controls.right_key_pressed() + (-Controls.left_key_pressed())
 
 	return Vector2(h, 0)
-
-
-func calc_dmg():
-	return 1
