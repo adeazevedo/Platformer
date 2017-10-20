@@ -13,7 +13,7 @@ var can_attack = true
 var can_dash = true
 
 var is_attacking = false
-var is_dashing = false
+var is_breaking_guard = false
 var is_defending = false
 var is_stagger = false
 
@@ -77,7 +77,7 @@ func apply_dmg( value ):
 func stagger():
 	is_attacking = false
 	is_defending = false
-	is_dashing = false
+	is_breaking_guard = false
 
 	get_node("AttackCollision").deactivate()
 	get_node("DefendCollision").deactivate()
@@ -158,7 +158,7 @@ func _on_defend_state():
 func _on_dash_state():
 	if can_dash:
 		can_dash = false
-		is_dashing = true
+		is_breaking_guard = true
 
 		get_node("DashCollision").activate()
 
@@ -168,7 +168,7 @@ func _on_dash_state():
 		dash_timer.start()
 
 func _on_dash_end():
-	is_dashing = false
+	is_breaking_guard = false
 
 	anim_node.stop()
 	velocity.x = 0
@@ -201,11 +201,11 @@ func read_inputs():
 	var direction = get_direction()
 
 	# Horizonatal flip
-	if !is_defending and !is_attacking and !is_dashing:
+	if !is_defending and !is_attacking and !is_breaking_guard:
 		if direction.x != 0:
 			set_scale(Vector2(direction.x, 1))
 
-	if !is_dashing:
+	if !is_breaking_guard:
 		velocity.x = BASE_MOVE_SPEED * direction.x
 
 

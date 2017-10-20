@@ -12,6 +12,10 @@ func _on_collision_body_enter( enemy ):
 			# I get stagger
 			_parent.stagger()
 
+		elif enemy.is_breaking_guard:
+			# enemy get stagger
+			enemy.stagger()
+
 		# Else, calc normal dmg
 		else:
 			var dmg = _parent.calc_atk() if _parent.has_method("calc_atk") else 1

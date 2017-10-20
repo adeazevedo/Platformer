@@ -4,14 +4,15 @@ onready var sm = StateMachine.new(self)
 
 const GRAVITY = 300
 var velocity = Vector2()
-var move_speed = 80
+var move_speed = 60
 
 var enemies_in_sight = []
 var target
 
 var hp = 10
-var ATTACK_RANGE = 100
+var ATTACK_RANGE = 45
 
+var is_preparing = false
 var is_chasing = false
 var is_attacking = false
 var is_breaking_guard = false
@@ -26,6 +27,7 @@ func _ready():
 
 	sm.add("idle", "_on_idle_state")
 	sm.add("chase", "_on_chase_state")
+	sm.add("prepare", "_on_prepare_state")
 	sm.add("attack", "_on_attack_state")
 	sm.add("defend", "_on_defend_state")
 	sm.add("break_guard", "_on_break_guard_state")
@@ -66,10 +68,10 @@ func search_next_state():
 	target = enemies_in_sight.front() if enemies_in_sight.size() > 0 else null
 
 	if target != null:
-		if get_pos().distance_to(target.get_pos()) > 75:
+		if get_pos().distance_to(target.get_pos()) > ATTACK_RANGE:
 			state = "chase"
 		else:
-			state = "attack"
+			state = "prepare"
 
 	else:
 		state = "idle"
@@ -105,11 +107,34 @@ func _on_chase_state():
 		sm.change_to("attack")
 
 
+func _on_prepare_state():
+	if !is_preparing:
+		is_preparing = true
+
+		get_node("PrepareTimer").start()
+
+	if target:
+		var state
+		if target.is_attacking: state = "defend"
+		elif target.is_defending: state = "break_guard"
+		elif target.is_breaking_guard: state = "attack"
+		else: state = "attack"
+
+		get_node("PrepareTimer").emit_signal("timeout", state)
+		get_node("PrepareTimer").call_deferred("stop")
+
+
+func _on_prepare_end(state):
+	is_preparing = false
+	sm.change_to(state)
+
 
 func _on_attack_state():
 	if !is_attacking:
 		is_attacking = true
+		velocity.x = 0
 		anim_node.play("attack")
+
 		get_node("AttackTimer").start()
 
 func _on_attack_end():
@@ -125,7 +150,7 @@ func _on_defend_state():
 		get_node("DefendTimer").start()
 
 func _on_defend_end():
-	is_defending = true
+	is_defending = false
 	sm.change_to("idle")
 
 
@@ -157,6 +182,13 @@ func stagger():
 	is_attacking = false
 	is_defending = false
 	is_breaking_guard = false
+
+	get_node("AttackCollision").deactivate()
+	#get_node("DefendCollision").deactivate()
+	get_node("BreakCollision").deactivate()
+
+	get_node("AttackTimer").call_deferred("stop")
+
 	sm.change_to("stagger")
 
 
