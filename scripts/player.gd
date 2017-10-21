@@ -42,8 +42,6 @@ func _ready():
 
 	get_node("AttackCollision").set_enable_monitoring(false)
 	get_node("AttackCollision").hide()
-	get_node("DefendCollision").set_enable_monitoring(false)
-	get_node("DefendCollision").hide()
 	get_node("DashCollision").set_enable_monitoring(false)
 	get_node("DashCollision").hide()
 
@@ -80,7 +78,6 @@ func stagger():
 	is_breaking_guard = false
 
 	get_node("AttackCollision").deactivate()
-	get_node("DefendCollision").deactivate()
 	get_node("DashCollision").deactivate()
 
 	attack_timer.call_deferred("stop")
@@ -135,22 +132,18 @@ func _on_defend_state():
 	velocity.x = velocity.x / 4
 	is_defending = true
 
-	get_node("DefendCollision").activate()
-
 	if not anim_node.get_current_animation() == "defend":
 		anim_node.play("defend")
 
 	# Change to attack - when Z is pressed
 	if Controls.attack_key_pressed():
 		is_defending = false
-		get_node("DefendCollision").deactivate()
 
 		sm.change_to("attack")
 
 	# Change to defend - when X is RELEASED
 	if not Controls.defend_key_pressed():
 		is_defending = false
-		get_node("DefendCollision").deactivate()
 
 		sm.change_to("idle")
 
@@ -193,7 +186,7 @@ func _on_stagger_state():
 
 func _on_stagger_end():
 	is_stagger = false
-
+	can_attack = true
 	sm.change_to("idle")
 
 ## Move
@@ -207,11 +200,6 @@ func read_inputs():
 
 	if !is_breaking_guard:
 		velocity.x = BASE_MOVE_SPEED * direction.x
-
-
-func interrupt_attack():
-	is_attacking = false
-	get_node("AttackCollision").deactivate()
 
 
 func get_direction():

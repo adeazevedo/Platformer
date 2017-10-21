@@ -51,10 +51,8 @@ func _fixed_process(delta):
 
 	move(motion)
 
-
 func calc_atk():
 	return 1
-
 
 func apply_dmg (value):
 	print("Damage received: ", value)
@@ -62,10 +60,17 @@ func apply_dmg (value):
 	# Change to hit state
 	sm.change_to("stagger")
 
+	if hp <= 0:
+		die()
+
+func die():
+	queue_free()
+
+
 func search_next_state():
 	var state = null
 
-	target = enemies_in_sight.front() if enemies_in_sight.size() > 0 else null
+	target = enemies_in_sight.front() if !enemies_in_sight.empty() else null
 
 	if target != null:
 		if get_pos().distance_to(target.get_pos()) > ATTACK_RANGE:
@@ -113,20 +118,20 @@ func _on_prepare_state():
 
 		get_node("PrepareTimer").start()
 
+
+func _on_prepare_end():
+	is_preparing = false
+
 	if target:
 		var state
 		if target.is_attacking: state = "defend"
 		elif target.is_defending: state = "break_guard"
-		elif target.is_breaking_guard: state = "attack"
 		else: state = "attack"
 
-		get_node("PrepareTimer").emit_signal("timeout", state)
-		get_node("PrepareTimer").call_deferred("stop")
+		sm.change_to(state)
+		return
 
-
-func _on_prepare_end(state):
-	is_preparing = false
-	sm.change_to(state)
+	sm.change_to("idle")
 
 
 func _on_attack_state():
