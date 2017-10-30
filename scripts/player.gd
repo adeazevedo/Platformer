@@ -2,8 +2,15 @@ extends KinematicBody2D
 var StateMachine = preload("res://scripts/StateMachine.gd")
 onready var sm = StateMachine.new(self)
 
-const GRAVITY = 300.0
-const BASE_MOVE_SPEED = 140
+const GRAVITY = 400.0
+const MAX_MOVE_SPEED = 200.0
+const JUMP_FORCE = 200.0
+const ACCELERATION = 500.0
+const DECELERATION = 1000.0
+
+var move_speed_mod = 1.0
+var acceleration_mod = 1.0
+var face = 1
 
 var velocity = Vector2()
 
@@ -11,10 +18,12 @@ var hp = 10
 
 var can_attack = true
 var can_dash = true
+var can_jump = true
 
 var is_attacking = false
 var is_breaking_guard = false
 var is_defending = false
+var is_jumping = false
 var is_stagger = false
 
 onready var anim_node = get_node("AnimationPlayer")
@@ -31,6 +40,7 @@ func _ready():
 	sm.add("attack", "_on_attack_state")
 	sm.add("defend", "_on_defend_state")
 	sm.add("dash", "_on_dash_state")
+	sm.add("jump", "_on_jump_state")
 	sm.add("stagger", "_on_stagger_state")
 
 	sm.initial("idle")
@@ -40,10 +50,8 @@ func _ready():
 	stagger_timer.connect("timeout" ,self, "_on_stagger_end")
 	dash_cooldown.connect("timeout", self, "_on_dash_cooldown_end")
 
-	get_node("AttackCollision").set_enable_monitoring(false)
-	get_node("AttackCollision").hide()
-	get_node("DashCollision").set_enable_monitoring(false)
-	get_node("DashCollision").hide()
+	get_node("AttackCollision").deactivate()
+	get_node("DashCollision").deactivate()
 
 	set_fixed_process(true)
 
@@ -54,12 +62,18 @@ func _fixed_process(delta):
 
 	# Gravity
 	velocity.y += GRAVITY * delta
+
 	var motion = velocity * delta
 
 	if is_colliding():
-        var n = get_collision_normal()
-        motion = n.slide(motion)
-        velocity = n.slide(velocity)
+		var n = get_collision_normal()
+		motion = n.slide(motion)
+		velocity = n.slide(velocity)
+
+		get_node("Label").set_text(str(velocity))
+
+		can_jump = true
+		is_jumping = false
 
 	move(motion)
 
@@ -94,8 +108,8 @@ func _on_idle_state():
 		sm.change_to("attack")
 		return
 
-	# Dash / Brake guard - when Space pressed
-	if can_dash and Controls.dash_key_pressed():
+	# Dash / Break guard - when Space pressed
+	if can_dash and Controls.break_key_pressed():
 		sm.change_to("dash")
 		return
 
@@ -104,13 +118,17 @@ func _on_idle_state():
 		sm.change_to("defend")
 		return
 
+	if can_jump && Controls.jump_key_pressed():
+		sm.change_to("jump")
+		return
+
 	if not anim_node.get_current_animation() == "idle":
 		anim_node.play("idle")
 
 
 ## Attack
 func _on_attack_state():
-	velocity.x = velocity.x / 2
+	move_speed_mod = 1.0 / 2.0
 
 	if can_attack:
 		can_attack = false
@@ -122,14 +140,14 @@ func _on_attack_state():
 func _on_attack_end():
 	can_attack = true
 	is_attacking = false
-	get_node("AttackCollision").set_enable_monitoring(false)
-	get_node("AttackCollision").hide()
+	move_speed_mod = 1
+	get_node("AttackCollision").deactivate()
 	sm.change_to("idle")
 
 
 ## Defend
 func _on_defend_state():
-	velocity.x = velocity.x / 4
+	move_speed_mod = 1.0 / 4.0
 	is_defending = true
 
 	if not anim_node.get_current_animation() == "defend":
@@ -144,7 +162,7 @@ func _on_defend_state():
 	# Change to defend - when X is RELEASED
 	if not Controls.defend_key_pressed():
 		is_defending = false
-
+		move_speed_mod = 1.0
 		sm.change_to("idle")
 
 
@@ -156,15 +174,17 @@ func _on_dash_state():
 		get_node("DashCollision").activate()
 
 		anim_node.play("dash")
-		velocity.x = get_scale().x * BASE_MOVE_SPEED * 3
+		acceleration_mod = 10.0
+		move_speed_mod = 3.0
 
 		dash_timer.start()
 
 func _on_dash_end():
+	move_speed_mod = 1.0
+	acceleration_mod = 1.0
 	is_breaking_guard = false
 
 	anim_node.stop()
-	velocity.x = 0
 
 	get_node("DashCollision").deactivate()
 
@@ -176,8 +196,18 @@ func _on_dash_cooldown_end():
 	can_dash = true
 
 
+func _on_jump_state():
+	velocity.y = velocity.y - JUMP_FORCE
+
+	if can_jump:
+		can_jump = false
+		is_jumping = true
+
+		sm.change_to("idle")
+
+
 func _on_stagger_state():
-	velocity.x = velocity.x / 4
+	move_speed_mod = 3.0 / 4.0
 
 	if !is_stagger:
 		is_stagger = true
@@ -187,22 +217,33 @@ func _on_stagger_state():
 func _on_stagger_end():
 	is_stagger = false
 	can_attack = true
+	move_speed_mod = 1.0
 	sm.change_to("idle")
+
 
 ## Move
 func read_inputs():
 	var direction = get_direction()
+	var speed = abs(velocity.x)
 
 	# Horizonatal flip
-	if !is_defending and !is_attacking and !is_breaking_guard:
-		if direction.x != 0:
-			set_scale(Vector2(direction.x, 1))
+	if direction != 0:
+		speed += ACCELERATION * acceleration_mod * get_process_delta_time()
 
-	if !is_breaking_guard:
-		velocity.x = BASE_MOVE_SPEED * direction.x
+		if !is_defending and !is_attacking and !is_breaking_guard:
+			face = direction
 
+	else:
+		speed -= DECELERATION * acceleration_mod * get_process_delta_time()
+
+	# if dashing then force movement
+	if is_breaking_guard:
+		speed = MAX_MOVE_SPEED * move_speed_mod
+
+	set_scale(Vector2(face, 1))
+	speed = clamp(speed, 0, MAX_MOVE_SPEED * move_speed_mod)
+
+	velocity.x = face * speed
 
 func get_direction():
-	var h = Controls.right_key_pressed() + (-Controls.left_key_pressed())
-
-	return Vector2(h, 0)
+	return Controls.right_key_pressed() + (-Controls.left_key_pressed())

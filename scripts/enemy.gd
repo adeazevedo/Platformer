@@ -9,7 +9,7 @@ var move_speed = 60
 var enemies_in_sight = []
 var target
 
-var hp = 10
+var hp = 3
 var ATTACK_RANGE = 45
 
 var is_preparing = false
@@ -109,7 +109,7 @@ func _on_chase_state():
 		velocity.x = direction.x * move_speed * get_process_delta_time()
 
 	else:
-		sm.change_to("attack")
+		sm.change_to("prepare")
 
 
 func _on_prepare_state():
@@ -120,6 +120,7 @@ func _on_prepare_state():
 
 
 func _on_prepare_end():
+	velocity.x = 0
 	is_preparing = false
 
 	if target:

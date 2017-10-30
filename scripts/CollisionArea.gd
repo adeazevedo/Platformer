@@ -1,7 +1,7 @@
 extends Area2D
 
 export(String) var _enemy_group
-export(NodePath) var _parent_path
+export(NodePath) var _parent_path = ".."
 
 onready var _parent = get_node(_parent_path)
 

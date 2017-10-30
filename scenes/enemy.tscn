@@ -379,7 +379,7 @@ autostart = false
 [node name="PrepareTimer" type="Timer" parent="."]
 
 process_mode = 1
-wait_time = 0.8
+wait_time = 0.7
 one_shot = true
 autostart = false
 
