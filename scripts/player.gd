@@ -9,9 +9,8 @@ const ACCELERATION = 500.0
 const DECELERATION = 1000.0
 
 var move_speed_mod = 1.0
-var acceleration_mod = 1.0
-var face = 1
 
+var face = 1
 var velocity = Vector2()
 
 var hp = 10
@@ -69,8 +68,6 @@ func _fixed_process(delta):
 		var n = get_collision_normal()
 		motion = n.slide(motion)
 		velocity = n.slide(velocity)
-
-		get_node("Label").set_text(str(velocity))
 
 		can_jump = true
 		is_jumping = false
@@ -174,20 +171,17 @@ func _on_dash_state():
 		get_node("DashCollision").activate()
 
 		anim_node.play("dash")
-		acceleration_mod = 10.0
 		move_speed_mod = 3.0
 
 		dash_timer.start()
 
 func _on_dash_end():
 	move_speed_mod = 1.0
-	acceleration_mod = 1.0
 	is_breaking_guard = false
-
-	anim_node.stop()
 
 	get_node("DashCollision").deactivate()
 
+	anim_node.stop()
 	dash_cooldown.start()
 
 	sm.change_to("idle")
@@ -207,7 +201,7 @@ func _on_jump_state():
 
 
 func _on_stagger_state():
-	move_speed_mod = 3.0 / 4.0
+	move_speed_mod = 1.0 / 4.0
 
 	if !is_stagger:
 		is_stagger = true
@@ -228,22 +222,25 @@ func read_inputs():
 
 	# Horizonatal flip
 	if direction != 0:
-		speed += ACCELERATION * acceleration_mod * get_process_delta_time()
+		speed += ACCELERATION * get_process_delta_time()
 
 		if !is_defending and !is_attacking and !is_breaking_guard:
 			face = direction
 
 	else:
-		speed -= DECELERATION * acceleration_mod * get_process_delta_time()
-
-	# if dashing then force movement
-	if is_breaking_guard:
-		speed = MAX_MOVE_SPEED * move_speed_mod
+		speed -= DECELERATION * get_process_delta_time()
 
 	set_scale(Vector2(face, 1))
+
 	speed = clamp(speed, 0, MAX_MOVE_SPEED * move_speed_mod)
 
-	velocity.x = face * speed
+	if is_breaking_guard:
+		speed = MAX_MOVE_SPEED * move_speed_mod
+		velocity.x = face * speed
+
+	else:
+		velocity.x = direction * speed
+
 
 func get_direction():
 	return Controls.right_key_pressed() + (-Controls.left_key_pressed())

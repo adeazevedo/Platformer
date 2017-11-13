@@ -1,0 +1,89 @@
+[gd_scene load_steps=14 format=1]
+
+[ext_resource path="res://addons/com.brandonlamb.bt/root.gd" type="Script" id=1]
+[ext_resource path="res://addons/com.brandonlamb.bt/root_icon.png" type="Texture" id=2]
+[ext_resource path="res://addons/com.brandonlamb.bt/sequence.gd" type="Script" id=3]
+[ext_resource path="res://addons/com.brandonlamb.bt/sequence_icon.png" type="Texture" id=4]
+[ext_resource path="res://ai/scripts/TargetExists.gd" type="Script" id=5]
+[ext_resource path="res://addons/com.brandonlamb.bt/condition_icon.png" type="Texture" id=6]
+[ext_resource path="res://ai/scripts/IsInsideSight.gd" type="Script" id=7]
+[ext_resource path="res://addons/com.brandonlamb.bt/selector.gd" type="Script" id=8]
+[ext_resource path="res://addons/com.brandonlamb.bt/selector_icon.png" type="Texture" id=9]
+[ext_resource path="res://ai/scripts/IsInAttackRange.gd" type="Script" id=10]
+[ext_resource path="res://ai/scripts/MoveCloser.gd" type="Script" id=11]
+[ext_resource path="res://addons/com.brandonlamb.bt/action_icon.png" type="Texture" id=12]
+[ext_resource path="res://ai/scripts/ExecuteAttack.gd" type="Script" id=13]
+
+[node name="AggressiveBehavior" type="Node"]
+
+script/script = ExtResource( 1 )
+__meta__ = {
+"_editor_icon": ExtResource( 2 )
+}
+disabled = null
+
+[node name="BehaviorSequence" type="Node" parent="."]
+
+script/script = ExtResource( 3 )
+__meta__ = {
+"_editor_icon": ExtResource( 4 )
+}
+disabled = null
+
+[node name="IsTargetExists" type="Node" parent="BehaviorSequence"]
+
+script/script = ExtResource( 5 )
+__meta__ = {
+"_editor_icon": ExtResource( 6 )
+}
+disabled = null
+
+[node name="IsInsideSight" type="Node" parent="BehaviorSequence"]
+
+script/script = ExtResource( 7 )
+__meta__ = {
+"_editor_icon": ExtResource( 6 )
+}
+disabled = null
+
+[node name="BehaviorSelector" type="Node" parent="BehaviorSequence"]
+
+script/script = ExtResource( 8 )
+__meta__ = {
+"_editor_icon": ExtResource( 9 )
+}
+disabled = null
+
+[node name="BehaviorSequence" type="Node" parent="BehaviorSequence/BehaviorSelector"]
+
+script/script = ExtResource( 3 )
+__meta__ = {
+"_editor_icon": ExtResource( 4 )
+}
+disabled = null
+
+[node name="IsInsideAttackRange" type="Node" parent="BehaviorSequence/BehaviorSelector/BehaviorSequence"]
+
+script/script = ExtResource( 10 )
+__meta__ = {
+"_editor_icon": ExtResource( 6 )
+}
+disabled = null
+
+[node name="MoveCloser" type="Node" parent="BehaviorSequence/BehaviorSelector/BehaviorSequence"]
+
+script/script = ExtResource( 11 )
+__meta__ = {
+"_editor_icon": ExtResource( 12 )
+}
+disabled = null
+
+[node name="ExecuteAttack" type="Node" parent="BehaviorSequence/BehaviorSelector"]
+
+script/script = ExtResource( 13 )
+__meta__ = {
+"_editor_icon": ExtResource( 12 )
+}
+disabled = null
+
+

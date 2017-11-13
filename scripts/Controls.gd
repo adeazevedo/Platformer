@@ -12,7 +12,6 @@ var jump_key = 0
 func _ready():
 	set_process_input(true)
 
-
 func _input(event):
 	if blocked: return
 

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=1]
+[gd_scene load_steps=5 format=1]
 
 [ext_resource path="res://tilesets/platform.tres" type="TileSet" id=1]
 [ext_resource path="res://scenes/enemy.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/player.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/TestEnemy.tscn" type="PackedScene" id=4]
 
 [node name="main" type="Node2D"]
 
@@ -26,11 +27,11 @@ tile_data = IntArray( 786423, 0, 786424, 0, 786425, 0, 786426, 0, 786427, 0, 786
 
 [node name="enemy" parent="." instance=ExtResource( 2 )]
 
-transform/pos = Vector2( 601.121, 212.323 )
+transform/pos = Vector2( 756.204, 213.683 )
 
 [node name="player" parent="." instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 221.092, 223.642 )
+transform/pos = Vector2( 37.4408, 313.427 )
 
 [node name="Camera2D" type="Camera2D" parent="player"]
 
@@ -51,5 +52,12 @@ drag_margin/left = 0.2
 drag_margin/top = 0.2
 drag_margin/right = 0.2
 drag_margin/bottom = 0.2
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TestEnemy" parent="." instance=ExtResource( 4 )]
+
+transform/pos = Vector2( 515.584, 310.166 )
 
 
