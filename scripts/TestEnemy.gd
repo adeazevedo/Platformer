@@ -2,16 +2,22 @@
 extends KinematicBody2D
 
 onready var sight = get_node('sight')
-onready var ai = get_node('BehaviorTree')
+onready var ai = get_node('AggressiveBehaviorTree')
+
+enum FACE {RIGHT = 1, LEFT = -1}
+
+var face = LEFT
 
 var entities_inside_sight = []
 var target_list = []
 var target
 
-var MAX_ATTACK_RANGE = 50
+export (int) var MAX_ATTACK_RANGE = 50
+export (int) var WALK_SPEED = 2
 
 signal target_changed(target)
 
+# Funcs ################################################
 func _ready():
 	set_fixed_process(true)
 
@@ -21,8 +27,17 @@ func _fixed_process(delta):
 		var new_target = target_list.front()
 		change_target(new_target)
 
-	#var r = ai.processTree(self)
-	var r = ai.tick(self, [])
+	var r = ai.tick(self, {})
+
+
+func face_flip(face):
+	if face == RIGHT:
+		face = RIGHT
+		set_scale(Vector2(-1, 1))
+
+	elif face == LEFT:
+		face = LEFT
+		set_scale(Vector2(1, 1))
 
 
 func is_inside_sight (body):
@@ -53,3 +68,12 @@ func _on_sight_body_exit( body ):
 
 		if target == erased:
 			change_target(null)
+
+
+func move(direction):
+	var velocity = direction * WALK_SPEED
+	face_flip(direction.x)
+	.move(velocity)
+
+func attack():
+	return get_node("AttackTrait").execute()

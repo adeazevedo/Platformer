@@ -27,11 +27,12 @@ tile_data = IntArray( 786423, 0, 786424, 0, 786425, 0, 786426, 0, 786427, 0, 786
 
 [node name="enemy" parent="." instance=ExtResource( 2 )]
 
-transform/pos = Vector2( 756.204, 213.683 )
+transform/pos = Vector2( 984.748, 300.747 )
 
 [node name="player" parent="." instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 37.4408, 313.427 )
+editor/display_folded = true
+transform/pos = Vector2( -102.855, 316.767 )
 
 [node name="Camera2D" type="Camera2D" parent="player"]
 
@@ -58,6 +59,6 @@ __meta__ = {
 
 [node name="TestEnemy" parent="." instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 515.584, 310.166 )
+transform/pos = Vector2( 376.958, 320.187 )
 
 
