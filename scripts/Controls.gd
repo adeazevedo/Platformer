@@ -2,40 +2,26 @@ extends Node
 
 var blocked = false
 
-var right_key = 0
-var left_key = 0
-var attack_key = 0
-var defend_key = 0
-var break_key = 0
-var jump_key = 0
+func is_pressed(key):
+	if blocked: return 0
 
-func _ready():
-	set_process_input(true)
+	return Input.is_action_pressed(key)
 
-func _input(event):
-	if blocked: return
 
-	right_key = Input.is_action_pressed("ui_right")
-	left_key = Input.is_action_pressed("ui_left")
-	attack_key = event.is_action_pressed("attack_key")
-	defend_key = Input.is_action_pressed("defend_key")
-	break_key = event.is_action_pressed("break_key")
-	jump_key = event.is_action_pressed("jump_key")
+func is_right_key_pressed():
+	return is_pressed("ui_right")
 
-func right_key_pressed():
-	return right_key
+func is_left_key_pressed():
+	return is_pressed("ui_left")
 
-func left_key_pressed():
-	return left_key
+func is_attack_key_pressed():
+	return is_pressed("attack_key")
 
-func attack_key_pressed():
-	return attack_key
+func is_defend_key_pressed():
+	return is_pressed("defend_key")
 
-func defend_key_pressed():
-	return defend_key
+func is_break_key_pressed():
+	return is_pressed("break_key")
 
-func break_key_pressed():
-	return break_key
-
-func jump_key_pressed():
-	return jump_key
+func is_jump_key_pressed():
+	return is_pressed("jump_key")

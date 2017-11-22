@@ -32,7 +32,7 @@ transform/pos = Vector2( 984.748, 300.747 )
 [node name="player" parent="." instance=ExtResource( 3 )]
 
 editor/display_folded = true
-transform/pos = Vector2( -102.855, 316.767 )
+transform/pos = Vector2( 95, 242 )
 
 [node name="Camera2D" type="Camera2D" parent="player"]
 
@@ -59,6 +59,6 @@ __meta__ = {
 
 [node name="TestEnemy" parent="." instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 376.958, 320.187 )
+transform/pos = Vector2( 376.958, 281.324 )
 
 

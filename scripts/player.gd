@@ -1,4 +1,6 @@
+
 extends KinematicBody2D
+
 var StateMachine = preload("res://scripts/StateMachine.gd")
 onready var sm = StateMachine.new(self)
 
@@ -31,6 +33,8 @@ onready var dash_timer = get_node("DashTimer")
 onready var stagger_timer = get_node("StaggerTimer")
 onready var dash_cooldown = get_node("DashCooldown")
 
+onready var gravity_effect = get_node("GravityEffect")
+
 
 func _ready():
 	add_to_group("player")
@@ -60,7 +64,7 @@ func _fixed_process(delta):
 	sm.execute_next()
 
 	# Gravity
-	velocity.y += GRAVITY * delta
+	velocity = accept(gravity_effect)
 
 	var motion = velocity * delta
 
@@ -73,6 +77,10 @@ func _fixed_process(delta):
 		is_jumping = false
 
 	move(motion)
+
+
+func accept (trait, args = self):
+	return trait.execute(args)
 
 
 func calc_atk():
@@ -101,21 +109,21 @@ func stagger():
 ## Idle
 func _on_idle_state():
 	# Change to attack - when Z is pressed
-	if can_attack and Controls.attack_key_pressed():
+	if can_attack and Controls.is_attack_key_pressed():
 		sm.change_to("attack")
 		return
 
 	# Dash / Break guard - when Space pressed
-	if can_dash and Controls.break_key_pressed():
+	if can_dash and Controls.is_break_key_pressed():
 		sm.change_to("dash")
 		return
 
 	# Change to defend - when X is pressed
-	if Controls.defend_key_pressed():
+	if Controls.is_defend_key_pressed():
 		sm.change_to("defend")
 		return
 
-	if can_jump && Controls.jump_key_pressed():
+	if can_jump && Controls.is_jump_key_pressed():
 		sm.change_to("jump")
 		return
 
@@ -151,13 +159,13 @@ func _on_defend_state():
 		anim_node.play("defend")
 
 	# Change to attack - when Z is pressed
-	if Controls.attack_key_pressed():
+	if Controls.is_attack_key_pressed():
 		is_defending = false
 
 		sm.change_to("attack")
 
 	# Change to defend - when X is RELEASED
-	if not Controls.defend_key_pressed():
+	if not Controls.is_defend_key_pressed():
 		is_defending = false
 		move_speed_mod = 1.0
 		sm.change_to("idle")
@@ -220,7 +228,6 @@ func read_inputs():
 	var direction = get_direction()
 	var speed = abs(velocity.x)
 
-	# Horizonatal flip
 	if direction != 0:
 		speed += ACCELERATION * get_process_delta_time()
 
@@ -243,4 +250,4 @@ func read_inputs():
 
 
 func get_direction():
-	return Controls.right_key_pressed() + (-Controls.left_key_pressed())
+	return Controls.is_right_key_pressed() + (-Controls.is_left_key_pressed())
