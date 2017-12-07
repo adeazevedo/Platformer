@@ -1,29 +1,22 @@
 
-extends KinematicBody2D
+extends "res://scripts/EnemyEntity.gd"
 
 onready var sight = get_node('sight')
-onready var ai = get_node('AggressiveBehaviorTree')
 
 onready var gravity_effect = get_node("GravityEffect")
-
-enum FACE {RIGHT = 1, LEFT = -1}
-
-var face = LEFT
 
 var entities_inside_sight = []
 var target_list = []
 var target
 
-export (int) var MAX_ATTACK_RANGE = 50
-export (int) var WALK_SPEED = 2
-
-var velocity = Vector2()
-
-
 signal target_changed(target)
 
 # Funcs ################################################
 func _ready():
+	face = LEFT
+
+	get_node("AttackCollision").deactivate()
+
 	set_fixed_process(true)
 
 
@@ -43,7 +36,7 @@ func _fixed_process(delta):
 		var new_target = target_list.front()
 		change_target(new_target)
 
-	var r = ai.tick(self, {})
+	ai.tick(self, {})
 
 
 func accept (trait, args = self):
@@ -66,7 +59,7 @@ func change_target (t):
 
 
 func _on_sight_body_enter( body ):
-	entities_inside_sight.append(weakref(body))
+	entities_inside_sight.append(body)
 
 	if body.is_in_group('player'):
 		target_list.append(body)
@@ -91,5 +84,14 @@ func move(direction):
 	face_flip(direction.x)
 	.move(velocity)
 
+func stagger():
+	pass
+
+func is_attacking():
+	return get_node("AttackTrait").is_attacking
+
 func attack():
 	return get_node("AttackTrait").execute()
+
+func _on_AttackCollision_body_enter( body ):
+	body.combat_process(self)

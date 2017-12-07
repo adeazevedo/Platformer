@@ -1,9 +1,7 @@
-[gd_scene load_steps=13 format=1]
+[gd_scene load_steps=11 format=1]
 
 [ext_resource path="res://scripts/enemy.gd" type="Script" id=1]
 [ext_resource path="res://sprites/thief.png" type="Texture" id=2]
-[ext_resource path="res://scripts/AttackCollision.gd" type="Script" id=3]
-[ext_resource path="res://scripts/BreakingGuardCollision.gd" type="Script" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
 
@@ -308,9 +306,6 @@ gravity = 98.0
 linear_damp = 0.1
 angular_damp = 1.0
 monitoring = false
-script/script = ExtResource( 3 )
-_enemy_group = "player"
-_parent_path = NodePath("..")
 
 [node name="Shape" type="CollisionShape2D" parent="AttackCollision"]
 
@@ -335,9 +330,6 @@ gravity = 98.0
 linear_damp = 0.1
 angular_damp = 1.0
 monitoring = false
-script/script = ExtResource( 4 )
-_enemy_group = "player"
-_parent_path = NodePath("..")
 
 [node name="Shape" type="CollisionShape2D" parent="BreakCollision"]
 

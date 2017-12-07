@@ -1,10 +1,14 @@
-[gd_scene load_steps=14 format=1]
+[gd_scene load_steps=18 format=1]
 
 [ext_resource path="res://scripts/player.gd" type="Script" id=1]
 [ext_resource path="res://sprites/Serdic.png" type="Texture" id=2]
-[ext_resource path="res://scripts/AttackCollision.gd" type="Script" id=3]
-[ext_resource path="res://scripts/BreakingGuardCollision.gd" type="Script" id=4]
-[ext_resource path="res://scripts/traits/GravityEffect.gd" type="Script" id=5]
+[ext_resource path="res://scripts/CollisionArea.gd" type="Script" id=3]
+[ext_resource path="res://scripts/traits/GravityEffect.gd" type="Script" id=4]
+[ext_resource path="res://scripts/traits/PlayerAttackTrait.gd" type="Script" id=5]
+[ext_resource path="res://scripts/traits/PlayerDefendTrait.gd" type="Script" id=6]
+[ext_resource path="res://scripts/traits/PlayerBreakTrait.gd" type="Script" id=7]
+[ext_resource path="res://scripts/traits/PlayerJumpTrait.gd" type="Script" id=8]
+[ext_resource path="res://scripts/traits/PlayerStaggerTrait.gd" type="Script" id=9]
 
 [sub_resource type="RectangleShape2D" id=1]
 
@@ -188,19 +192,24 @@ transform/pos = Vector2( 1, -32 )
 z/z = 1
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 1, 0, 0, 1, -1.18615, 5 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, 5, 6 )
 shapes/0/trigger = false
 collision/layers = 1
 collision/mask = 1
 collision/margin = 0.08
 script/script = ExtResource( 1 )
+HP = 3
+MAX_MOVE_SPEED = 200.0
+ACCELERATION = 500.0
+DECELERATION = 1000.0
 
 [node name="Sprite" type="Sprite" parent="."]
 
 transform/pos = Vector2( 0, 6 )
 texture = ExtResource( 2 )
+offset = Vector2( -4, 0 )
 region = true
-region_rect = Rect2( 476, 265, 43, 52 )
+region_rect = Rect2( 299, 100, 45, 50 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
@@ -219,7 +228,7 @@ autoplay = "idle"
 
 [node name="BodyCollision" type="CollisionShape2D" parent="."]
 
-transform/pos = Vector2( -1.18615, 5 )
+transform/pos = Vector2( 5, 6 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
@@ -239,8 +248,6 @@ linear_damp = 0.1
 angular_damp = 1.0
 monitoring = false
 script/script = ExtResource( 3 )
-_enemy_group = "enemy"
-_parent_path = NodePath("..")
 
 [node name="Shape" type="CollisionShape2D" parent="AttackCollision"]
 
@@ -265,9 +272,7 @@ gravity = 98.0
 linear_damp = 0.1
 angular_damp = 1.0
 monitoring = false
-script/script = ExtResource( 4 )
-_enemy_group = "enemy"
-_parent_path = NodePath("..")
+script/script = ExtResource( 3 )
 
 [node name="Shape" type="CollisionShape2D" parent="DashCollision"]
 
@@ -279,37 +284,37 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="DashTimer" type="Timer" parent="."]
-
-process_mode = 0
-wait_time = 0.4
-one_shot = true
-autostart = false
-
-[node name="DashCooldown" type="Timer" parent="."]
-
-process_mode = 0
-wait_time = 0.6
-one_shot = true
-autostart = false
-
-[node name="AttackTimer" type="Timer" parent="."]
-
-process_mode = 0
-wait_time = 0.7
-one_shot = true
-autostart = false
-
-[node name="StaggerTimer" type="Timer" parent="."]
-
-process_mode = 1
-wait_time = 1.0
-one_shot = true
-autostart = false
-
 [node name="GravityEffect" type="Node" parent="."]
 
-script/script = ExtResource( 5 )
+script/script = ExtResource( 4 )
+disable = false
 GRAVITY = 400.0
+
+[node name="PlayerAttackTrait" type="Node" parent="."]
+
+script/script = ExtResource( 5 )
+attack_speed = 1.0
+
+[node name="PlayerDefendTrait" type="Node" parent="."]
+
+script/script = ExtResource( 6 )
+
+[node name="PlayerBreakTrait" type="Node" parent="."]
+
+script/script = ExtResource( 7 )
+break_duration = 0.4
+cooldown_duration = 1.0
+
+[node name="PlayerJumpTrait" type="Node" parent="."]
+
+script/script = ExtResource( 8 )
+JUMP_FORCE = 220.0
+
+[node name="PlayerStaggerTrait" type="Node" parent="."]
+
+script/script = ExtResource( 9 )
+stagger_time = 0.5
+
+[connection signal="body_enter" from="AttackCollision" to="." method="_on_AttackCollision_body_enter"]
 
 

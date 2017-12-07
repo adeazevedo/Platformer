@@ -125,8 +125,8 @@ func _on_prepare_end():
 
 	if target:
 		var state
-		if target.is_attacking: state = "defend"
-		elif target.is_defending: state = "break_guard"
+		if target.is_attacking(): state = "defend"
+		elif target.is_defending(): state = "break_guard"
 		else: state = "attack"
 
 		sm.change_to(state)

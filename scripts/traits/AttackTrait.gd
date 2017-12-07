@@ -9,9 +9,6 @@ onready var anim_node = get_node(anim_path)
 var is_attacking = false
 var attack_finished = false
 
-func _init():
-	pass
-
 func _ready():
 	anim_node.connect("finished", self, "attack_end")
 
