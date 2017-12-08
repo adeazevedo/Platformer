@@ -2,10 +2,47 @@ extends Node
 
 var blocked = false
 
-func is_pressed(key):
+var action = {
+	ui_right = false,
+	ui_left = false,
+	attack_key = false,
+	defend_key = false,
+	break_key = false,
+	jump_key = false,
+}
+
+func _ready():
+	set_process_input(true)
+
+func _input(event):
 	if blocked: return 0
 
-	return Input.is_action_pressed(key)
+	for act in action.keys():
+		if event.is_action_released(act):
+			action[act] = false
+			return
+
+		if event.is_action(act):
+			action[act] = event
+
+
+func is_pressed(a):
+	if action.has(a) and typeof(action[a]) != TYPE_BOOL:
+		return action[a].is_pressed()
+
+	return false
+
+func is_echo(a):
+	if action.has(a) and typeof(action[a]) != TYPE_BOOL:
+		return action[a].is_echo()
+
+	return false
+
+func is_pressed_once(act):
+	return is_pressed(act) and !is_echo(act)
+
+func is_holding(act):
+	return is_pressed(act) or is_echo(act)
 
 
 func is_right_key_pressed():

@@ -39,9 +39,6 @@ func _fixed_process(delta):
 		motion = n.slide(motion)
 		velocity = n.slide(velocity)
 
-		get_node("PlayerJumpTrait").can_jump = true
-		get_node("PlayerJumpTrait").is_jumping = false
-
 	move(motion)
 
 
@@ -70,18 +67,18 @@ func stagger():
 ## Idle
 func _on_idle_state():
 	# Change to attack - when Z is pressed
-	if can_attack() and Controls.is_attack_key_pressed():
+	if can_attack() and Controls.is_pressed_once("attack_key"):
 		next_state = "attack"
 
 	# Dash / Break guard - when Space pressed
-	elif can_break_guard() and Controls.is_break_key_pressed():
+	elif can_break_guard() and Controls.is_pressed_once("break_key"):
 		next_state = "break_guard"
 
 	# Change to defend - when X is pressed
-	elif Controls.is_defend_key_pressed():
+	elif Controls.is_holding("defend_key"):
 		next_state = "defend"
 
-	elif can_jump() && Controls.is_jump_key_pressed():
+	elif can_jump() and Controls.is_pressed_once("jump_key"):
 		next_state = "jump"
 
 	if not anim_node.get_current_animation() == "idle":
@@ -113,20 +110,24 @@ func can_break_guard():
 func is_breaking_guard():
 	return get_node("PlayerBreakTrait").is_breaking_guard
 
-	## Break on this character manifest as a dash
+## Break on this character manifest as a dash
 func _on_break_state():
 	accept( get_node("PlayerBreakTrait") )
 
 
 ## Jump
+var can_jump = true
+var JUMP_FORCE = 240
 func can_jump():
-	return get_node("PlayerJumpTrait").can_jump
+	return get_node("GroundRay").is_colliding()
 
 func is_jumping():
 	return get_node("PlayerJumpTrait").is_jumping
 
 func _on_jump_state():
-	accept( get_node("PlayerJumpTrait") )
+	velocity.y -= JUMP_FORCE
+
+	next_state = "idle"
 
 
 ## Stagger
@@ -171,8 +172,9 @@ func read_inputs():
 
 
 func get_direction():
-	return Controls.is_right_key_pressed() + (-Controls.is_left_key_pressed())
+	return Controls.is_holding("ui_right") + (-Controls.is_holding("ui_left"))
 
 
 func _on_AttackCollision_body_enter( body ):
-	body.combat_process(self)
+	if body.is_in_group("enemy"):
+		body.combat_process(self)

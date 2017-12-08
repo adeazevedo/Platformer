@@ -13,7 +13,7 @@
 [sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
-extents = Vector2( 13.9699, 24.0425 )
+extents = Vector2( 13.9699, 23 )
 
 [sub_resource type="Animation" id=2]
 
@@ -308,12 +308,20 @@ cooldown_duration = 1.0
 [node name="PlayerJumpTrait" type="Node" parent="."]
 
 script/script = ExtResource( 8 )
-JUMP_FORCE = 220.0
+JUMP_FORCE = 3000.0
 
 [node name="PlayerStaggerTrait" type="Node" parent="."]
 
 script/script = ExtResource( 9 )
 stagger_time = 0.5
+
+[node name="GroundRay" type="RayCast2D" parent="."]
+
+transform/pos = Vector2( 0, 25 )
+enabled = true
+cast_to = Vector2( 0, 5 )
+layer_mask = 1
+type_mask = 5
 
 [connection signal="body_enter" from="AttackCollision" to="." method="_on_AttackCollision_body_enter"]
 
