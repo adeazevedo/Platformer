@@ -1,0 +1,69 @@
+[gd_scene load_steps=13 format=1]
+
+[ext_resource path="res://addons/com.brandonlamb.bt/root.gd" type="Script" id=1]
+[ext_resource path="res://addons/com.brandonlamb.bt/root_icon.png" type="Texture" id=2]
+[ext_resource path="res://addons/com.brandonlamb.bt/selector.gd" type="Script" id=3]
+[ext_resource path="res://addons/com.brandonlamb.bt/selector_icon.png" type="Texture" id=4]
+[ext_resource path="res://addons/com.brandonlamb.bt/sequence.gd" type="Script" id=5]
+[ext_resource path="res://addons/com.brandonlamb.bt/sequence_icon.png" type="Texture" id=6]
+[ext_resource path="res://ai/scripts/IsStaggering.gd" type="Script" id=7]
+[ext_resource path="res://addons/com.brandonlamb.bt/condition_icon.png" type="Texture" id=8]
+[ext_resource path="res://ai/scripts/ExecuteStagger.gd" type="Script" id=9]
+[ext_resource path="res://addons/com.brandonlamb.bt/action_icon.png" type="Texture" id=10]
+[ext_resource path="res://ai/AggressiveBehavior.tscn" type="PackedScene" id=11]
+[ext_resource path="res://ai/scripts/ExecuteIdle.gd" type="Script" id=12]
+
+[node name="GruntAI" type="Node"]
+
+script/script = ExtResource( 1 )
+__meta__ = {
+"_editor_icon": ExtResource( 2 )
+}
+disabled = null
+
+[node name="BehaviorSelector" type="Node" parent="."]
+
+script/script = ExtResource( 3 )
+__meta__ = {
+"_editor_icon": ExtResource( 4 )
+}
+disabled = null
+
+[node name="BehaviorSequence" type="Node" parent="BehaviorSelector"]
+
+script/script = ExtResource( 5 )
+__meta__ = {
+"_editor_icon": ExtResource( 6 )
+}
+disabled = null
+
+[node name="IsStaggering" type="Node" parent="BehaviorSelector/BehaviorSequence"]
+
+script/script = ExtResource( 7 )
+__meta__ = {
+"_editor_icon": ExtResource( 8 )
+}
+disabled = null
+
+[node name="ExecuteStagger" type="Node" parent="BehaviorSelector/BehaviorSequence"]
+
+script/script = ExtResource( 9 )
+__meta__ = {
+"_editor_icon": ExtResource( 10 )
+}
+disabled = null
+
+[node name="AggressiveBehavior" parent="BehaviorSelector" instance=ExtResource( 11 )]
+
+editor/display_folded = true
+
+[node name="ExecuteIdle" type="Node" parent="BehaviorSelector"]
+
+script/script = ExtResource( 12 )
+__meta__ = {
+"_editor_icon": ExtResource( 10 )
+}
+disabled = null
+
+
+[editable path="BehaviorSelector/AggressiveBehavior"]

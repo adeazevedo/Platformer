@@ -1,6 +1,15 @@
 extends KinematicBody2D
-var StateMachine = preload("res://scripts/StateMachine.gd")
-onready var sm = StateMachine.new(self)
+
+var state = {
+	idle			= funcref(self, "_on_idle_state"),
+	chase		= funcref(self, "_on_chase_state"),
+	prepare		= funcref(self, "_on_prepare_state"),
+	attack		= funcref(self, "_on_attack_state"),
+	defend		= funcref(self, "_on_defend_state"),
+	break_guard	= funcref(self, "_on_break_guard_state"),
+	stagger		= funcref(self, "_on_stagger_state"),
+}
+var next_state = "idle"
 
 const GRAVITY = 300
 var velocity = Vector2()
@@ -25,21 +34,11 @@ onready var anim_node = get_node("AnimationPlayer")
 func _ready():
 	add_to_group("enemy")
 
-	sm.add("idle", "_on_idle_state")
-	sm.add("chase", "_on_chase_state")
-	sm.add("prepare", "_on_prepare_state")
-	sm.add("attack", "_on_attack_state")
-	sm.add("defend", "_on_defend_state")
-	sm.add("break_guard", "_on_break_guard_state")
-	sm.add("stagger", "_on_stagger_state")
-
-	sm.initial("idle")
-
 	set_fixed_process(true)
 
 
 func _fixed_process(delta):
-	sm.execute_next()
+	state[next_state].call_func()
 
 	velocity.y += GRAVITY * delta
 	var motion = velocity * delta
@@ -58,7 +57,7 @@ func apply_dmg (value):
 	print("Damage received: ", value)
 	hp -= value
 	# Change to hit state
-	sm.change_to("stagger")
+	next_state = "stagger"
 
 	if hp <= 0:
 		die()
@@ -91,12 +90,12 @@ func _on_idle_state():
 
 	var state = search_next_state()
 
-	sm.change_to(state)
+	next_state = state
 
 
 func _on_chase_state():
 	if !target:
-		sm.change_to("idle")
+		next_state = "idle"
 		return
 
 	var my_pos = get_pos()
@@ -109,7 +108,7 @@ func _on_chase_state():
 		velocity.x = direction.x * move_speed * get_process_delta_time()
 
 	else:
-		sm.change_to("prepare")
+		next_state = "prepare"
 
 
 func _on_prepare_state():
@@ -129,7 +128,7 @@ func _on_prepare_end():
 		elif target.is_defending(): state = "break_guard"
 		else: state = "attack"
 
-		sm.change_to(state)
+		next_state = state
 		return
 
 	sm.change_to("idle")
@@ -145,7 +144,7 @@ func _on_attack_state():
 
 func _on_attack_end():
 	is_attacking = false
-	sm.change_to("idle")
+	next_state = "idle"
 
 
 func _on_defend_state():
@@ -157,7 +156,7 @@ func _on_defend_state():
 
 func _on_defend_end():
 	is_defending = false
-	sm.change_to("idle")
+	next_state = "idle"
 
 
 func _on_break_guard_state():
@@ -170,7 +169,7 @@ func _on_break_guard_state():
 func _on_break_guard_end():
 	is_breaking_guard = false
 
-	sm.change_to("idle")
+	next_state = "idle"
 
 
 func _on_stagger_state():
@@ -181,7 +180,7 @@ func _on_stagger_state():
 
 func _on_stagger_end():
 	is_staggering = false
-	sm.change_to("idle")
+	next_state = "idle"
 
 
 func stagger():
@@ -195,7 +194,7 @@ func stagger():
 
 	get_node("AttackTimer").call_deferred("stop")
 
-	sm.change_to("stagger")
+	next_state = "stagger"
 
 
 # When in sight range
@@ -205,7 +204,7 @@ func _on_Sight_body_enter( body ):
 			enemies_in_sight.append(body)
 
 		target = body if target == null else body
-		sm.change_to("chase")
+		next_state = "chase"
 
 
 func _on_Sight_body_exit( body ):

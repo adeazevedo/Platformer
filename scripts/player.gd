@@ -13,8 +13,6 @@ var next_state = "idle"
 
 var move_speed_mod = 1.0
 
-var is_stagger = false
-
 onready var anim_node = get_node("AnimationPlayer")
 
 
@@ -116,8 +114,6 @@ func _on_break_state():
 
 
 ## Jump
-var can_jump = true
-var JUMP_FORCE = 240
 func can_jump():
 	return get_node("GroundRay").is_colliding()
 
@@ -125,25 +121,18 @@ func is_jumping():
 	return get_node("PlayerJumpTrait").is_jumping
 
 func _on_jump_state():
-	velocity.y -= JUMP_FORCE
+	velocity = accept( get_node("PlayerJumpTrait") )
 
 	next_state = "idle"
 
 
 ## Stagger
+func is_staggering():
+	return get_node("PlayerStaggerTrait").is_staggering
+
 func _on_stagger_state():
-	move_speed_mod = 1.0 / 4.0
+	accept( get_node("PlayerStaggerTrait") )
 
-	if !is_stagger:
-		is_stagger = true
-		anim_node.play("stagger")
-
-func _on_stagger_end():
-	is_stagger = false
-	#can_attack = true
-	move_speed_mod = 1.0
-
-	next_state = "idle"
 
 ## Move
 var last_direction = 1

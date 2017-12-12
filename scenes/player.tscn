@@ -308,18 +308,18 @@ cooldown_duration = 1.0
 [node name="PlayerJumpTrait" type="Node" parent="."]
 
 script/script = ExtResource( 8 )
-JUMP_FORCE = 3000.0
+JUMP_FORCE = 240.0
 
 [node name="PlayerStaggerTrait" type="Node" parent="."]
 
 script/script = ExtResource( 9 )
-stagger_time = 0.5
+stagger_time = 1.0
 
 [node name="GroundRay" type="RayCast2D" parent="."]
 
-transform/pos = Vector2( 0, 25 )
+transform/pos = Vector2( 0, 20 )
 enabled = true
-cast_to = Vector2( 0, 5 )
+cast_to = Vector2( 0, 9.5 )
 layer_mask = 1
 type_mask = 5
 

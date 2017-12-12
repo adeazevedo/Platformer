@@ -1,5 +1,4 @@
 extends "res://addons/com.brandonlamb.bt/root.gd"
 
 func tick(actor, ctx):
-	actor.attack()
-	return OK
+	return OK if actor.is_staggering() else FAILED

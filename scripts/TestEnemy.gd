@@ -9,6 +9,8 @@ var entities_inside_sight = []
 var target_list = []
 var target
 
+onready var ai = get_node("GruntAI")
+
 signal target_changed(target)
 
 # Funcs ################################################
@@ -38,10 +40,8 @@ func _fixed_process(delta):
 
 	ai.tick(self, {})
 
-
 func accept (trait, args = self):
 	return trait.execute(args)
-
 
 func face_flip (face):
 	if face == RIGHT or face == LEFT:
@@ -84,8 +84,29 @@ func move(direction):
 	face_flip(direction.x)
 	.move(velocity)
 
+
+func idle():
+	get_node("anim").play("idle")
+
+
+var is_staggering = false
+func is_staggering():
+	return is_staggering
+
 func stagger():
-	pass
+	if !is_staggering:
+		is_staggering = true
+		get_node("anim").play("stagger")
+
+		get_node("AttackTrait").interrupt()
+		get_node("AttackCollision").deactivate()
+
+		get_node("StaggerTime").connect("timeout", self, "stagger_timeout", [], CONNECT_ONESHOT)
+		get_node("StaggerTime").start()
+
+func stagger_timeout():
+	is_staggering = false
+
 
 func is_attacking():
 	return get_node("AttackTrait").is_attacking

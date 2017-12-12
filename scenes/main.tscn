@@ -56,24 +56,20 @@ __meta__ = {
 [node name="Grunt" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 292, 326 )
-ai_type = "Aggressive"
 
 [node name="Grunt1" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 1100, 299 )
 MAX_ATTACK_RANGE = 40
-ai_type = "Aggressive"
 
 [node name="Grunt2" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 1699, 138 )
 MAX_ATTACK_RANGE = 40
-ai_type = "Aggressive"
 
 [node name="Grunt3" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 2104, 360 )
 MAX_ATTACK_RANGE = 40
-ai_type = "Aggressive"
 
 

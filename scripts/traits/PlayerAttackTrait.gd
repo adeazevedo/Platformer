@@ -7,7 +7,7 @@ var is_attacking = false
 export (float) var attack_speed = 0.75
 
 func _execute (body):
-	body.move_speed_mod = 1.0 / 2.0
+	body.move_speed_mod = 0.5
 	var anim = body.anim_node
 
 	if can_attack:
@@ -36,6 +36,9 @@ func interrupt(body):
 
 	body.move_speed_mod = 1.0
 	body.get_node("AttackCollision").deactivate()
+
+	if body.anim_node.is_connected("finished", self, "on_finished"):
+		body.anim_node.disconnect("finished", self, "on_finished")
 
 func stop_timer():
 	pass#attack_timer.call_deferred("stop")
