@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=1]
+[gd_scene load_steps=17 format=1]
 
 [ext_resource path="res://addons/com.brandonlamb.bt/root.gd" type="Script" id=1]
 [ext_resource path="res://addons/com.brandonlamb.bt/root_icon.png" type="Texture" id=2]
@@ -9,10 +9,13 @@
 [ext_resource path="res://ai/scripts/IsInsideSight.gd" type="Script" id=7]
 [ext_resource path="res://addons/com.brandonlamb.bt/selector.gd" type="Script" id=8]
 [ext_resource path="res://addons/com.brandonlamb.bt/selector_icon.png" type="Texture" id=9]
-[ext_resource path="res://ai/scripts/IsInAttackRange.gd" type="Script" id=10]
-[ext_resource path="res://ai/scripts/MoveCloser.gd" type="Script" id=11]
-[ext_resource path="res://addons/com.brandonlamb.bt/action_icon.png" type="Texture" id=12]
-[ext_resource path="res://ai/scripts/ExecuteAttack.gd" type="Script" id=13]
+[ext_resource path="res://ai/scripts/CanAttack.gd" type="Script" id=10]
+[ext_resource path="res://addons/com.brandonlamb.bt/inverter.gd" type="Script" id=11]
+[ext_resource path="res://addons/com.brandonlamb.bt/inverter_icon.png" type="Texture" id=12]
+[ext_resource path="res://ai/scripts/IsInAttackRange.gd" type="Script" id=13]
+[ext_resource path="res://ai/scripts/MoveCloser.gd" type="Script" id=14]
+[ext_resource path="res://addons/com.brandonlamb.bt/action_icon.png" type="Texture" id=15]
+[ext_resource path="res://ai/scripts/ExecuteAttack.gd" type="Script" id=16]
 
 [node name="AggressiveBehavior" type="Node"]
 
@@ -62,7 +65,7 @@ __meta__ = {
 }
 disabled = null
 
-[node name="IsInsideAttackRange" type="Node" parent="BehaviorSequence/BehaviorSelector/BehaviorSequence"]
+[node name="CanAttack" type="Node" parent="BehaviorSequence/BehaviorSelector/BehaviorSequence"]
 
 script/script = ExtResource( 10 )
 __meta__ = {
@@ -70,7 +73,7 @@ __meta__ = {
 }
 disabled = null
 
-[node name="MoveCloser" type="Node" parent="BehaviorSequence/BehaviorSelector/BehaviorSequence"]
+[node name="BehaviorInverter" type="Node" parent="BehaviorSequence/BehaviorSelector/BehaviorSequence"]
 
 script/script = ExtResource( 11 )
 __meta__ = {
@@ -78,11 +81,27 @@ __meta__ = {
 }
 disabled = null
 
-[node name="ExecuteAttack" type="Node" parent="BehaviorSequence/BehaviorSelector"]
+[node name="IsInsideAttackRange" type="Node" parent="BehaviorSequence/BehaviorSelector/BehaviorSequence/BehaviorInverter"]
 
 script/script = ExtResource( 13 )
 __meta__ = {
-"_editor_icon": ExtResource( 12 )
+"_editor_icon": ExtResource( 6 )
+}
+disabled = null
+
+[node name="MoveCloser" type="Node" parent="BehaviorSequence/BehaviorSelector/BehaviorSequence"]
+
+script/script = ExtResource( 14 )
+__meta__ = {
+"_editor_icon": ExtResource( 15 )
+}
+disabled = null
+
+[node name="ExecuteAttack" type="Node" parent="BehaviorSequence/BehaviorSelector"]
+
+script/script = ExtResource( 16 )
+__meta__ = {
+"_editor_icon": ExtResource( 15 )
 }
 disabled = null
 

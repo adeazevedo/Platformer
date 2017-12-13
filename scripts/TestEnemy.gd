@@ -96,17 +96,22 @@ func is_staggering():
 func stagger():
 	if !is_staggering:
 		is_staggering = true
-		get_node("anim").play("stagger")
 
 		get_node("AttackTrait").interrupt()
 		get_node("AttackCollision").deactivate()
+
+		get_node("anim").play("stagger")
 
 		get_node("StaggerTime").connect("timeout", self, "stagger_timeout", [], CONNECT_ONESHOT)
 		get_node("StaggerTime").start()
 
 func stagger_timeout():
 	is_staggering = false
+	get_node("anim").play("idle")
 
+
+func can_attack():
+	return get_node("AttackTrait").can_attack
 
 func is_attacking():
 	return get_node("AttackTrait").is_attacking

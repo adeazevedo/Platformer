@@ -231,6 +231,7 @@ script/script = ExtResource( 4 )
 anim_path = NodePath("../anim")
 animation_name = "attack"
 anim_speed = 1.6
+attack_cooldown = 0.7
 
 [node name="GravityEffect" type="Node" parent="."]
 

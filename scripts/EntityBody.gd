@@ -44,6 +44,7 @@ func die():
 	emit_signal("die")
 	queue_free()
 
+
 func apply_dmg(dmg):
 	current_hp -= dmg
 	emit_signal("damage_applied", dmg)
